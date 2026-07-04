@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediLink | Smart Healthcare Platform</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav>
+
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="MediLink Logo">
+            <span>MediLink</span>
+        </div>
+
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="nav-buttons">
+
+            <button class="login-btn">
+                Login
+            </button>
+
+            <button class="register-btn">
+                Register
+            </button>
+
+        </div>
+
+    </nav>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero" id="home">
+
+        <div class="hero-text">
+
+            <span class="tagline">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo">
+                Smart Healthcare Platform
+            </span>
+
+            <h1>
+                Connecting Hospitals,
+                Doctors &
+                <span class="highlight">Patients</span>.
+
+                <br>
+
+                Simplifying Healthcare
+                Through One Secure Platform.
+            </h1>
+
+            <p>
+
+                A centralized healthcare platform that enables hospitals,
+                doctors and patients to securely manage appointments,
+                prescriptions and medical records from anywhere.
+
+            </p>
+
+            <div class="buttons">
+
+                <button class="primary">
+
+                    Get Started
+
+                </button>
+
+                <button class="secondary">
+
+                    Learn More
+
+                </button>
+
+            </div>
+
+            <div class="trust">
+                <span>✔ Secure Records</span>
+                <span>✔ Cloud Storage</span>
+                <span>✔ AI Ready</span>
+            </div>
+
+        </div>
+
+        <div class="hero-image">
+
+            <img
+                src="{{ url_for('static', filename='images/hero.svg') }}"
+                alt="Healthcare Illustration">
+
+        </div>
+
+    </section>
+
+    <!-- ================= STATS ================= -->
+
+    <section class="stats">
+
+        <div class="card">
+
+            <h2>500+</h2>
+
+            <p>Hospitals</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>50K+</h2>
+
+            <p>Patients</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>100K+</h2>
+
+            <p>Medical Records</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>99.9%</h2>
+
+            <p>System Uptime</p>
+
+        </div>
+
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section class="features" id="features">
+
+        <div class="section-title">
+
+            <span class="section-tag">
+                ✨ Features
+            </span>
+
+            <h2>Why Choose MediLink?</h2>
+
+            <p>
+                Everything you need to simplify healthcare management in one secure platform.
+            </p>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-user-doctor"></i>
+                </div>
+
+                <h3>Doctor Portal</h3>
+
+                <p>
+                    Doctors can access patient history, upload prescriptions, and manage appointments.
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <h3>Patient Portal</h3>
+
+                <p>
+                    Patients can view prescriptions, reports, appointments, and medical history.
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-hospital"></i>
+                </div>
+
+                <h3>Hospital Dashboard</h3>
+
+                <p>
+                    Manage doctors, patients, departments, and hospital operations efficiently.
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-file-medical"></i>
+                </div>
+
+                <h3>Medical Records</h3>
+
+                <p>
+                    Securely upload, download, and manage digital medical records from anywhere.
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+
+                <h3>Appointments</h3>
+
+                <p>
+                    Schedule and manage appointments with doctors through an easy booking system.
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <h3>Secure Platform</h3>
+
+                <p>
+                    Advanced security keeps patient data protected with encrypted storage.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+
+    <section class="about" id="about">
+
+        <div class="about-image">
+
+            <img src="{{ url_for('static', filename='images/doctor.svg') }}"
+                alt="Doctor">
+
+        </div>
+
+        <div class="about-content">
+
+            <span class="section-tag">
+                About MediLink
+            </span>
+
+            <h2>
+                Building the Future of Digital Healthcare
+            </h2>
+
+            <p>
+
+                MediLink is a smart healthcare management platform that connects
+                hospitals, doctors, and patients through one secure system.
+                It simplifies appointment scheduling, digital medical records,
+                prescriptions, and healthcare communication.
+
+            </p>
+
+            <div class="about-list">
+
+                <div class="about-item">
+                    <i class="fa-solid fa-shield-heart"></i>
+                    <span>Secure Medical Records</span>
+                </div>
+
+                <div class="about-item">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Easy Appointment Booking</span>
+                </div>
+
+                <div class="about-item">
+                    <i class="fa-solid fa-cloud"></i>
+                    <span>Cloud-Based Healthcare Platform</span>
+                </div>
+
+                <div class="about-item">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>AI-Ready Architecture</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- ================= HOW IT WORKS ================= -->
+
+    <section class="workflow">
+
+        <div class="section-title">
+
+            <span class="section-tag">
+                How It Works
+            </span>
+
+            <h2>Simple. Secure. Connected.</h2>
+
+            <p>
+                MediLink makes healthcare collaboration effortless in just four simple steps.
+            </p>
+
+        </div>
+
+        <div class="workflow-container">
+
+            <div class="workflow-card">
+
+                <div class="workflow-icon">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+
+                <h3>Register</h3>
+
+                <p>
+                    Patients create a secure Health ID to access the MediLink platform.
+                </p>
+
+            </div>
+
+            <div class="workflow-arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="workflow-card">
+
+                <div class="workflow-icon">
+                    <i class="fa-solid fa-hospital"></i>
+                </div>
+
+                <h3>Hospital Uploads Records</h3>
+
+                <p>
+                    Hospitals securely upload prescriptions, reports and treatment history.
+                </p>
+
+            </div>
+
+            <div class="workflow-arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="workflow-card">
+
+                <div class="workflow-icon">
+                    <i class="fa-solid fa-user-doctor"></i>
+                </div>
+
+                <h3>Doctor Access</h3>
+
+                <p>
+                    Authorized doctors instantly access patient records for better care.
+                </p>
+
+            </div>
+
+            <div class="workflow-arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="workflow-card">
+
+                <div class="workflow-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+
+                <h3>Better Healthcare</h3>
+
+                <p>
+                    Faster diagnosis, improved collaboration and secure follow-up treatment.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- ================= MEDICAL RECORDS ================= -->
+
+    <section class="records">
+
+        <div class="records-content">
+
+            <span class="section-tag">
+                Platform Highlights
+            </span>
+
+            <h2>
+                Built for Fast, Secure and Reliable Healthcare
+            </h2>
+
+            <p>
+                MediLink securely stores prescriptions, laboratory reports,
+                medical history, diagnoses, and treatment records in one
+                centralized healthcare platform.
+            </p>
+
+            <div class="record-list">
+
+                <div class="record-item">
+
+                    <i class="fa-solid fa-file-medical"></i>
+
+                    <div class="record-info">
+                        <h4>12,500+</h4>
+                        <p>Medical Records Stored</p>
+                    </div>
+
+                </div>
+
+                <div class="record-item">
+
+                    <i class="fa-solid fa-hospital"></i>
+
+                    <div class="record-info">
+                        <h4>500+</h4>
+                        <p>Partner Hospitals</p>
+                    </div>
+
+                </div>
+
+                <div class="record-item">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <div class="record-info">
+                        <h4>99.9%</h4>
+                        <p>Secure Uptime</p>
+                    </div>
+
+                </div>
+
+                <div class="record-item">
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                    <div class="record-info">
+                        <h4>&lt; 2 sec</h4>
+                        <p>Record Retrieval</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="records-image">
+
+            <img src="{{ url_for('static', filename='images/doctor-order.svg') }}"
+                alt="Medical Records">
+
+        </div>
+
+    </section>
+    <!-- ================= CALL TO ACTION ================= -->
+
+    <section class="cta">
+
+        <div class="cta-image">
+
+            <img src="{{ url_for('static', filename='images/medical-care.svg') }}"
+                alt="Healthcare">
+
+        </div>
+
+        <div class="cta-content">
+
+            <span class="section-tag">
+                Get Started Today
+            </span>
+
+            <h2>
+                Ready to Transform Healthcare?
+            </h2>
+
+            <p>
+
+                Join hospitals, doctors and patients using MediLink to
+                simplify healthcare management with one secure platform.
+
+            </p>
+
+            <div class="cta-buttons">
+
+                <button class="primary">
+                    Create Account
+                </button>
+
+                <button class="secondary">
+                    Contact Us
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div class="footer-column">
+
+                <h2>MediLink</h2>
+
+                <p>
+                    Connecting hospitals, doctors and patients through
+                    one secure digital healthcare platform.
+                </p>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h3>Quick Links</h3>
+
+                <ul>
+
+                    <li><a href="#">Home</a></li>
+
+                    <li><a href="#">Features</a></li>
+
+                    <li><a href="#">About</a></li>
+
+                    <li><a href="#">Contact</a></li>
+
+                </ul>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h3>Services</h3>
+
+                <ul>
+
+                    <li>Doctor Portal</li>
+
+                    <li>Patient Portal</li>
+
+                    <li>Medical Records</li>
+
+                    <li>Appointments</li>
+
+                </ul>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h3>Contact</h3>
+
+                <p><i class="fa-solid fa-location-dot"></i> Bangalore, India</p>
+
+                <p><i class="fa-solid fa-envelope"></i> support@medilink.com</p>
+
+                <p><i class="fa-solid fa-phone"></i> +91 98765 43210</p>
+
+                <div class="social-icons">
+
+                    <a href="#"><i class="fa-brands fa-github"></i></a>
+
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <p class="copyright">
+
+            © 2026 MediLink. All Rights Reserved.
+
+        </p>
+
+    </footer>
+    <!-- ================= CONTACT ================= -->
+
+    <section class="contact" id="contact">
+
+        <!-- We'll build this later -->
+
+    </section>
+
+</body>
+
+</html>
