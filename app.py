@@ -5,17 +5,26 @@ from models import db
 from models.user import User
 from routes.auth import auth
 
+from routes.patient import patient
+from routes.doctor import doctor
+from routes.hospital import hospital
+from routes.admin import admin
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 app.register_blueprint(auth)
+app.register_blueprint(patient)
+app.register_blueprint(doctor)
+app.register_blueprint(hospital)
+app.register_blueprint(admin)
 db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-login_manager.login_view = "login"
+login_manager.login_view = "auth.login"
 
 
 @login_manager.user_loader

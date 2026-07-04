@@ -24,13 +24,27 @@ Home
 
         <div class="nav-buttons">
 
-            <button class="login-btn">
-                Login
-            </button>
+            {% if current_user.is_authenticated %}
 
-            <button class="register-btn">
-                Register
-            </button>
+                <span class="welcome-text">
+                    Welcome, {{ current_user.name }}
+                </span>
+
+                <a href="{{ url_for('auth.logout') }}" class="register-btn">
+                    Logout
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('auth.login') }}" class="login-btn">
+                    Login
+                </a>
+
+                <a href="{{ url_for('auth.register') }}" class="register-btn">
+                    Register
+                </a>
+
+            {% endif %}
 
         </div>
 

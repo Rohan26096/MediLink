@@ -1,0 +1,60 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}
+Patient Dashboard
+{% endblock %}
+
+{% block page_title %}
+Patient Dashboard
+{% endblock %}
+
+{% block sidebar %}
+
+<li>
+    <a href="#">
+        <i class="fa-solid fa-house"></i>
+        Dashboard
+    </a>
+</li>
+
+<li>
+    <a href="#">
+        <i class="fa-solid fa-file-medical"></i>
+        Medical Records
+    </a>
+</li>
+
+<li>
+    <a href="#">
+        <i class="fa-solid fa-calendar-check"></i>
+        Appointments
+    </a>
+</li>
+
+<li>
+    <a href="#">
+        <i class="fa-solid fa-pills"></i>
+        Prescriptions
+    </a>
+</li>
+
+<li>
+    <a href="#">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </a>
+</li>
+
+{% endblock %}
+
+{% block dashboard_content %}
+
+<h1>
+    Welcome {{ current_user.name }}
+</h1>
+
+<p>
+    This is your patient dashboard.
+</p>
+
+{% endblock %}

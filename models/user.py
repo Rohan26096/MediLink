@@ -25,6 +25,14 @@ class User(UserMixin, db.Model):
         default=datetime.utcnow
     )
 
+    # Relationship
+    patient = db.relationship(
+        "Patient",
+        backref="user",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
+
     def set_password(self, password):
         from werkzeug.security import generate_password_hash
         self.password_hash = generate_password_hash(password)
