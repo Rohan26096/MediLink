@@ -1,9 +1,12 @@
 import os
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
 class Config:
+    SECRET_KEY = "change-this-secret-key"
 
-    SECRET_KEY = "medilink_secret_key"
-
-    SQLALCHEMY_DATABASE_URI = "sqlite:///instance/medilink.db"
+    SQLALCHEMY_DATABASE_URI = (
+        "sqlite:///" + os.path.join(BASE_DIR, "database", "medilink.db")
+    )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
