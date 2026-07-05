@@ -65,6 +65,7 @@ Medical Records
                 <th>Uploaded On</th>
 
                 <th>File</th>
+                <th>Action</th>
 
             </tr>
 
@@ -83,11 +84,21 @@ Medical Records
                 <td>{{ record.uploaded_at.strftime("%d %b %Y") }}</td>
 
                 <td>
-                    {{ record.file_name }}
-                    <br><br>
                     <a href="{{ url_for('medical_records.download_record',
                                         filename=record.file_name) }}">
                         Download
+                    </a>
+                </td>
+
+                <td>
+                    <a
+                        href="{{ url_for('medical_records.delete_record',
+                                        record_id=record.id) }}"
+                        onclick="return confirm('Delete this medical record?')"
+                        class="delete-btn">
+
+                        Delete
+
                     </a>
                 </td>
 

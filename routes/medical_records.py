@@ -115,3 +115,35 @@ def download_record(filename):
         filename,
         as_attachment=True
     )
+
+@medical_records.route("/patient/medical-records/delete/<int:record_id>")
+@login_required
+def delete_record(record_id):
+
+    record = MedicalRecord.query.get_or_404(record_id)
+
+    patient = Patient.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    # Prevent users from deleting someone else's record
+    if record.patient_id != patient.id:
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for("medical_records.records"))
+
+    filepath = os.path.join(
+        current_app.root_path,
+        "uploads",
+        "reports",
+        record.file_name
+    )
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+    db.session.delete(record)
+    db.session.commit()
+
+    flash("Medical record deleted successfully.", "success")
+
+    return redirect(url_for("medical_records.records"))
