@@ -1,0 +1,47 @@
+{% extends "dashboard_base.html" %}
+
+{% block sidebar %}
+
+<li>
+    <a href="{{ url_for('patient.dashboard') }}">
+        <i class="fa-solid fa-house"></i>
+        Dashboard
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('patient.profile') }}">
+        <i class="fa-solid fa-user"></i>
+        My Profile
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('medical_records.records') }}">
+        <i class="fa-solid fa-file-medical"></i>
+        Medical Records
+    </a>
+</li>
+
+<li>
+    <a href="#">
+        <i class="fa-solid fa-calendar-check"></i>
+        Appointments
+    </a>
+</li>
+
+<li>
+    <a href="#">
+        <i class="fa-solid fa-pills"></i>
+        Prescriptions
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('auth.logout') }}">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </a>
+</li>
+
+{% endblock %}

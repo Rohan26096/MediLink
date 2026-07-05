@@ -9,6 +9,7 @@ from routes.patient import patient
 from routes.doctor import doctor
 from routes.hospital import hospital
 from routes.admin import admin
+from routes.medical_records import medical_records
 
 
 app = Flask(__name__)
@@ -19,6 +20,7 @@ app.register_blueprint(patient)
 app.register_blueprint(doctor)
 app.register_blueprint(hospital)
 app.register_blueprint(admin)
+app.register_blueprint(medical_records)
 db.init_app(app)
 
 login_manager = LoginManager()

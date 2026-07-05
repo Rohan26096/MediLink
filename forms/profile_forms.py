@@ -6,20 +6,23 @@ from wtforms import (
     SelectField,
     SubmitField
 )
-from wtforms.validators import Optional
+from wtforms.validators import Optional, NumberRange
 
 
 class PatientProfileForm(FlaskForm):
 
     age = IntegerField(
         "Age",
-        validators=[Optional()]
+        validators=[
+            Optional(),
+            NumberRange(min=0, max=150)
+        ]
     )
 
     gender = SelectField(
         "Gender",
         choices=[
-            ("", "Select"),
+            ("", "Select Gender"),
             ("Male", "Male"),
             ("Female", "Female"),
             ("Other", "Other")
@@ -29,7 +32,7 @@ class PatientProfileForm(FlaskForm):
     blood_group = SelectField(
         "Blood Group",
         choices=[
-            ("", "Select"),
+            ("", "Select Blood Group"),
             ("A+", "A+"),
             ("A-", "A-"),
             ("B+", "B+"),
@@ -41,7 +44,7 @@ class PatientProfileForm(FlaskForm):
         ]
     )
 
-    phone = StringField("Phone")
+    phone = StringField("Phone Number")
 
     address = TextAreaField("Address")
 

@@ -28,3 +28,10 @@ class Patient(db.Model):
     allergies = db.Column(db.Text)
 
     medical_history = db.Column(db.Text)
+    
+    medical_records = db.relationship(
+    "MedicalRecord",
+    backref="patient",
+    lazy=True,
+    cascade="all, delete-orphan"
+)
