@@ -10,12 +10,127 @@ Patient Dashboard
 
 {% block dashboard_content %}
 
-<h1>
-    Welcome {{ current_user.name }}
-</h1>
+<div class="dashboard-header">
+    <h2>Welcome Back, {{ current_user.name }} 👋</h2>
+    <p>Here's a quick overview of your healthcare account.</p>
+</div>
 
-<p>
-    This is your patient dashboard.
-</p>
+<!-- Statistics Cards -->
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <i class="fa-solid fa-file-medical"></i>
+        <h2>{{ medical_records_count }}</h2>
+        <p>Medical Records</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-calendar-check"></i>
+        <h2>{{ appointment_count }}</h2>
+        <p>Appointments</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-prescription"></i>
+        <h2>{{ prescription_count }}</h2>
+        <p>Prescriptions</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-user-check"></i>
+        <h2>{{ profile_completion }}%</h2>
+        <p>Profile Complete</p>
+    </div>
+
+</div>
+
+<!-- Quick Actions -->
+
+<div class="dashboard-section">
+
+    <h3>Quick Actions</h3>
+
+    <div class="action-buttons">
+
+        <a href="{{ url_for('medical_records.records') }}" class="action-btn">
+            <i class="fa-solid fa-folder-open"></i>
+            Medical Records
+        </a>
+
+        <a href="{{ url_for('patient.profile') }}" class="action-btn">
+            <i class="fa-solid fa-user-pen"></i>
+            Edit Profile
+        </a>
+
+        <a href="#" class="action-btn disabled">
+            <i class="fa-solid fa-calendar-plus"></i>
+            Book Appointment
+        </a>
+
+    </div>
+
+</div>
+
+<!-- Recent Records -->
+
+<div class="dashboard-section">
+
+    <h3>Recent Medical Records</h3>
+
+    {% if recent_records %}
+
+    <table class="recent-table">
+
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Uploaded</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for record in recent_records %}
+
+            <tr>
+                <td>{{ record.title }}</td>
+                <td>{{ record.record_type }}</td>
+                <td>{{ record.uploaded_at.strftime("%d %b %Y") }}</td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <p>No medical records uploaded yet.</p>
+
+    {% endif %}
+
+</div>
+
+<!-- Health Tip -->
+
+<div class="dashboard-section">
+
+    <h3>Health Tip</h3>
+
+    <div class="health-tip">
+
+        <i class="fa-solid fa-heart-pulse"></i>
+
+        <p>
+            Stay hydrated, exercise regularly, and keep your medical records
+            updated for better healthcare management.
+        </p>
+
+    </div>
+
+</div>
 
 {% endblock %}

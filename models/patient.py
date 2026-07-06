@@ -30,8 +30,9 @@ class Patient(db.Model):
     medical_history = db.Column(db.Text)
     
     medical_records = db.relationship(
-    "MedicalRecord",
-    backref="patient",
-    lazy=True,
-    cascade="all, delete-orphan"
-)
+        "MedicalRecord",
+        backref="patient",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+    

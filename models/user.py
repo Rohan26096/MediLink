@@ -32,6 +32,12 @@ class User(UserMixin, db.Model):
         uselist=False,
         cascade="all, delete-orphan"
     )
+    doctor = db.relationship(
+        "Doctor",
+        backref="user",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
 
     def set_password(self, password):
         from werkzeug.security import generate_password_hash
