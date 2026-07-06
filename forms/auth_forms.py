@@ -2,7 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
     PasswordField,
-    SelectField,
     BooleanField,
     SubmitField
 )
@@ -46,15 +45,6 @@ class RegisterForm(FlaskForm):
         validators=[
             DataRequired(),
             EqualTo("password")
-        ]
-    )
-
-    role = SelectField(
-        "Role",
-        choices=[
-            ("patient", "Patient"),
-            ("doctor", "Doctor"),
-            ("hospital_admin", "Hospital Admin")
         ]
     )
 

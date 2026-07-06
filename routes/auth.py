@@ -28,7 +28,7 @@ def register():
         user = User(
             name=form.name.data,
             email=form.email.data,
-            role=form.role.data
+            role="patient"
         )
 
         user.set_password(form.password.data)

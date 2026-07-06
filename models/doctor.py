@@ -12,6 +12,12 @@ class Doctor(db.Model):
         nullable=False,
         unique=True
     )
+    
+    hospital_id = db.Column(
+        db.Integer,
+        db.ForeignKey("hospitals.id"),
+        nullable=False
+    )
 
     specialization = db.Column(
         db.String(100),
