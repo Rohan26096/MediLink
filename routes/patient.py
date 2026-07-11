@@ -20,6 +20,7 @@ from models.patient import Patient
 from forms.profile_forms import PatientProfileForm
 from models.medical_record import MedicalRecord
 from models.prescription import Prescription
+from utils.email import send_email
 
 from io import BytesIO
 
@@ -235,6 +236,34 @@ def book_appointment():
 
         db.session.add(appointment)
         db.session.commit()
+        send_email(
+
+            current_user.email,
+
+            "Appointment Booked Successfully",
+
+            f"""
+        Hi {current_user.name},
+
+        Your appointment has been booked successfully.
+
+        Doctor:
+        Dr. {appointment.doctor.user.name}
+
+        Hospital:
+        {appointment.hospital.name}
+
+        Date:
+        {appointment.appointment_date}
+
+        Time:
+        {appointment.appointment_time}
+
+        Thank you for choosing MediLink.
+
+        -MediLink Team
+        """
+        )
 
         flash(
             "Appointment booked successfully!",

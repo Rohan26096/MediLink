@@ -21,6 +21,7 @@ from models.doctor import Doctor
 from models.patient import Patient
 from models.appointment import Appointment
 
+
 hospital = Blueprint("hospital", __name__)
 
 

@@ -20,6 +20,7 @@ from forms.prescription_form import PrescriptionForm
 from models.prescription import Prescription
 from models.patient import Patient
 from models.medical_record import MedicalRecord
+from utils.email import send_email
 
 doctor = Blueprint("doctor", __name__)
 
@@ -90,6 +91,31 @@ def accept_appointment(appointment_id):
     appointment.status = "Accepted"
 
     db.session.commit()
+    send_email(
+
+        appointment.patient.user.email,
+
+        "Appointment Accepted",
+
+        f"""
+    Hi {appointment.patient.user.name},
+
+    Your appointment has been accepted.
+
+    Doctor:
+    Dr. {appointment.doctor.user.name}
+
+    Date:
+    {appointment.appointment_date}
+
+    Time:
+    {appointment.appointment_time}
+
+    Please arrive 10 minutes early.
+
+    -MediLink Team
+    """
+    )
 
     flash("Appointment accepted.", "success")
 
@@ -105,6 +131,24 @@ def reject_appointment(appointment_id):
     appointment.status = "Rejected"
 
     db.session.commit()
+    send_email(
+
+        appointment.patient.user.email,
+
+        "Appointment Rejected",
+
+        f"""
+    Hi {appointment.patient.user.name},
+
+    Unfortunately your appointment request
+    was rejected.
+
+    Please login to MediLink and book
+    another slot.
+
+    -MediLink Team
+    """
+    )
 
     flash("Appointment rejected.", "warning")
 
@@ -225,6 +269,26 @@ def prescription(appointment_id):
 
         db.session.add(prescription)
         db.session.commit()
+        send_email(
+
+            appointment.patient.user.email,
+
+            "Prescription Uploaded",
+
+            f"""
+        Hi {appointment.patient.user.name},
+
+        Dr. {appointment.doctor.user.name}
+        has uploaded your prescription.
+
+        Please login to MediLink
+        to download it.
+
+        Thank you.
+
+        -MediLink Team
+        """
+        )
 
         flash(
             "Prescription saved successfully.",

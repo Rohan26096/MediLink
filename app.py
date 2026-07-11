@@ -1,10 +1,12 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
+from flask_mail import Mail
+
 from config import Config
 from models import db
 from models.user import User
-from routes.auth import auth
 
+from routes.auth import auth
 from routes.patient import patient
 from routes.doctor import doctor
 from routes.hospital import hospital
@@ -15,18 +17,26 @@ from routes.medical_records import medical_records
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Initialize extensions
+db.init_app(app)
+mail = Mail()
+
+mail.init_app(app)
+
+mail = Mail()
+mail.init_app(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "auth.login"
+
+# Register blueprints
 app.register_blueprint(auth)
 app.register_blueprint(patient)
 app.register_blueprint(doctor)
 app.register_blueprint(hospital)
 app.register_blueprint(admin)
 app.register_blueprint(medical_records)
-db.init_app(app)
-
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-login_manager.login_view = "auth.login"
 
 
 @login_manager.user_loader

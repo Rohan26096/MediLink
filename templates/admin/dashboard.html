@@ -18,60 +18,201 @@ Admin Dashboard
 
 </div>
 
+<!-- Statistics -->
+
 <div class="stats-grid">
 
     <div class="stat-card">
+
         <i class="fa-solid fa-users"></i>
+
         <h2>{{ total_users }}</h2>
+
         <p>Total Users</p>
+
     </div>
 
     <div class="stat-card">
+
         <i class="fa-solid fa-user"></i>
+
         <h2>{{ total_patients }}</h2>
+
         <p>Patients</p>
+
     </div>
 
     <div class="stat-card">
+
         <i class="fa-solid fa-user-doctor"></i>
+
         <h2>{{ total_doctors }}</h2>
+
         <p>Doctors</p>
+
     </div>
 
     <div class="stat-card">
+
         <i class="fa-solid fa-hospital"></i>
+
         <h2>{{ total_hospitals }}</h2>
+
         <p>Hospitals</p>
+
     </div>
 
     <div class="stat-card">
+
         <i class="fa-solid fa-calendar-check"></i>
+
         <h2>{{ total_appointments }}</h2>
+
         <p>Appointments</p>
+
     </div>
 
 </div>
+
+<!-- Platform Overview -->
+
 <div class="dashboard-section">
 
-<h3>Platform Activity</h3>
+    <h2>Platform Overview</h2>
 
-<ul class="activity-list">
+    <div class="stats-grid">
 
-<li>New User Registered</li>
+        <div class="stat-card">
 
-<li>Hospital Added</li>
+            <i class="fa-solid fa-user-check"></i>
 
-<li>Doctor Joined</li>
+            <h2>{{ total_users }}</h2>
 
-</ul>
+            <p>Registered Users</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-user-doctor"></i>
+
+            <h2>{{ total_doctors }}</h2>
+
+            <p>Doctors</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-hospital"></i>
+
+            <h2>{{ total_hospitals }}</h2>
+
+            <p>Hospitals</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-calendar-days"></i>
+
+            <h2>{{ total_appointments }}</h2>
+
+            <p>Appointments</p>
+
+        </div>
+
+    </div>
 
 </div>
+
+<!-- Quick Actions -->
+
+<div class="dashboard-section">
+
+    <h2>Quick Actions</h2>
+
+    <div class="action-buttons">
+
+        <a href="{{ url_for('admin.users') }}" class="action-btn">
+
+            <i class="fa-solid fa-users"></i>
+
+            Users
+
+        </a>
+
+        <a href="{{ url_for('admin.doctors') }}" class="action-btn">
+
+            <i class="fa-solid fa-user-doctor"></i>
+
+            Doctors
+
+        </a>
+
+        <a href="{{ url_for('admin.hospitals') }}" class="action-btn">
+
+            <i class="fa-solid fa-hospital"></i>
+
+            Hospitals
+
+        </a>
+
+        <a href="{{ url_for('admin.appointments') }}" class="action-btn">
+
+            <i class="fa-solid fa-calendar-check"></i>
+
+            Appointments
+
+        </a>
+
+    </div>
+
+</div>
+
+<!-- Recent Activity -->
+
+<div class="dashboard-section">
+
+    <h2>Platform Activity</h2>
+
+    <ul class="activity-list">
+
+        <li>
+            <i class="fa-solid fa-user-plus"></i>
+            New User Registered
+        </li>
+
+        <li>
+            <i class="fa-solid fa-hospital"></i>
+            Hospital Added
+        </li>
+
+        <li>
+            <i class="fa-solid fa-user-doctor"></i>
+            Doctor Joined
+        </li>
+
+        <li>
+            <i class="fa-solid fa-calendar-check"></i>
+            Appointment Booked
+        </li>
+
+    </ul>
+
+</div>
+
+<!-- Analytics -->
 
 <div class="dashboard-section">
 
     <h2>Appointment Analytics</h2>
 
-    <canvas id="appointmentChart"></canvas>
+    <div style="height:350px;">
+
+        <canvas id="appointmentChart"></canvas>
+
+    </div>
 
 </div>
 
@@ -80,10 +221,15 @@ Admin Dashboard
 const ctx = document.getElementById("appointmentChart");
 
 const appointmentData = {{ [
+
     appointment_status["Pending"],
+
     appointment_status["Accepted"],
+
     appointment_status["Rejected"],
+
     appointment_status["Completed"]
+
 ] | tojson }};
 
 new Chart(ctx, {
@@ -93,17 +239,24 @@ new Chart(ctx, {
     data: {
 
         labels: [
+
             "Pending",
+
             "Accepted",
+
             "Rejected",
+
             "Completed"
+
         ],
 
         datasets: [{
 
             label: "Appointments",
 
-            data: appointmentData
+            data: appointmentData,
+
+            borderWidth: 2
 
         }]
 
@@ -113,7 +266,17 @@ new Chart(ctx, {
 
         responsive: true,
 
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+
+        plugins: {
+
+            legend: {
+
+                position: "bottom"
+
+            }
+
+        }
 
     }
 

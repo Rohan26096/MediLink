@@ -5,36 +5,14 @@ Users
 {% endblock %}
 
 {% block page_title %}
-Users
+All Users
 {% endblock %}
 
 {% block dashboard_content %}
 
 <div class="dashboard-section">
 
-<h2>All Users</h2>
-
-<form method="GET">
-
-<input
-type="text"
-name="search"
-value="{{ search }}"
-placeholder="Search users..."
-class="form-control">
-
-<br>
-
-<button
-class="action-btn">
-
-Search
-
-</button>
-
-</form>
-
-<br>
+<h2>Registered Users</h2>
 
 <table class="recent-table">
 
@@ -61,7 +39,7 @@ Search
 
 <td>{{ user.email }}</td>
 
-<td>{{ user.role }}</td>
+<td>{{ user.role.title() }}</td>
 
 <td>{{ user.created_at.strftime("%d %b %Y") }}</td>
 

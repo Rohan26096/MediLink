@@ -1,0 +1,63 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}
+Appointments
+{% endblock %}
+
+{% block page_title %}
+All Appointments
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+<h2>Appointments</h2>
+
+<table class="recent-table">
+
+<thead>
+
+<tr>
+
+<th>Patient</th>
+<th>Doctor</th>
+<th>Hospital</th>
+<th>Date</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for appointment in appointments %}
+
+<tr>
+
+<td>{{ appointment.patient.user.name }}</td>
+
+<td>{{ appointment.doctor.user.name }}</td>
+
+<td>{{ appointment.hospital.name }}</td>
+
+<td>
+
+{{ appointment.appointment_date.strftime("%d %b %Y") }}
+
+</td>
+
+<td>{{ appointment.status }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endblock %}

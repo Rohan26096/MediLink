@@ -4,6 +4,7 @@ from flask_login import logout_user
 from forms.auth_forms import RegisterForm, LoginForm
 from models import db
 from models.user import User
+from utils.email import send_email
 
 auth = Blueprint("auth", __name__)
 
@@ -35,6 +36,21 @@ def register():
 
         db.session.add(user)
         db.session.commit()
+        send_email(
+            user.email,
+            "Welcome to MediLink",
+            f"""
+        Hi {user.name},
+
+        Welcome to MediLink!
+
+        Your account has been created successfully.
+
+        Thank you for joining us.
+
+        -MediLink Team
+        """
+        )
 
         flash("Registration successful. Please login.", "success")
 
