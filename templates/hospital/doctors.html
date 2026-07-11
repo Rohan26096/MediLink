@@ -1,0 +1,92 @@
+{% extends "hospital/hospital_base.html" %}
+
+{% block title %}
+Manage Doctors
+{% endblock %}
+
+{% block page_title %}
+Manage Doctors
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+    <div class="section-header">
+        <h2>Doctors</h2>
+
+        <a href="{{ url_for('hospital.add_doctor') }}" class="action-btn">
+            <i class="fa-solid fa-user-plus"></i>
+            Add Doctor
+        </a>
+    </div>
+
+    {% if doctors %}
+
+    <table class="recent-table">
+
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Specialization</th>
+                <th>Department</th>
+                <th>Experience</th>
+                <th>Fee</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for doctor in doctors %}
+
+            <tr>
+
+                <td>{{ doctor.user.name }}</td>
+
+                <td>{{ doctor.specialization }}</td>
+
+                <td>{{ doctor.department }}</td>
+
+                <td>{{ doctor.experience }} Years</td>
+
+                <td>₹{{ doctor.consultation_fee }}</td>
+
+                <td>
+
+                    <a
+                        href="{{ url_for('hospital.edit_doctor', doctor_id=doctor.id) }}"
+                        class="action-btn"
+                    >
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+                    </a>
+
+                    <a
+                        href="{{ url_for('hospital.delete_doctor', doctor_id=doctor.id) }}"
+                        class="action-btn"
+                        onclick="return confirm('Delete this doctor?');"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                        Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <p>No doctors added yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

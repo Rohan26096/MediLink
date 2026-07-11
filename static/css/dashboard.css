@@ -269,3 +269,15 @@ body{
     font-size:30px;
     color:#ef4444;
 }
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+.dashboard-section canvas {
+    max-width: 500px;
+    height: 350px !important;
+    margin: 20px auto;
+}

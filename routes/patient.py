@@ -1,10 +1,34 @@
-from flask import Blueprint, render_template, flash
+from flask import (
+    Blueprint,
+    render_template,
+    flash,
+    redirect,
+    url_for
+)
+from flask import jsonify
+from forms.appointment_forms import AppointmentForm
+
+from models.appointment import Appointment
+from models.hospital import Hospital
+from models.doctor import Doctor
 from flask_login import login_required, current_user
 
 from models import db
 from models.patient import Patient
 from forms.profile_forms import PatientProfileForm
 from models.medical_record import MedicalRecord
+from models.prescription import Prescription
+
+from io import BytesIO
+
+from flask import send_file
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph
+)
+
+from reportlab.lib.styles import getSampleStyleSheet
 
 patient = Blueprint("patient", __name__)
 
@@ -22,23 +46,39 @@ def dashboard():
     prescription_count = 0
     profile_completion = 0
     recent_records = []
+    upcoming = None
 
     if patient_data:
 
-        # Count Medical Records
         medical_records_count = MedicalRecord.query.filter_by(
             patient_id=patient_data.id
         ).count()
 
-        # Latest 5 Records
+        appointment_count = Appointment.query.filter_by(
+            patient_id=patient_data.id
+        ).count()
+
         recent_records = (
-            MedicalRecord.query.filter_by(patient_id=patient_data.id)
+            MedicalRecord.query.filter_by(
+                patient_id=patient_data.id
+            )
             .order_by(MedicalRecord.uploaded_at.desc())
             .limit(5)
             .all()
         )
 
-        # Profile Completion
+        upcoming = (
+            Appointment.query.filter(
+                Appointment.patient_id == patient_data.id,
+                Appointment.status != "Completed"
+            )
+            .order_by(
+                Appointment.appointment_date,
+                Appointment.appointment_time
+            )
+            .first()
+        )
+
         profile_fields = [
             patient_data.age,
             patient_data.gender,
@@ -66,6 +106,7 @@ def dashboard():
         prescription_count=prescription_count,
         profile_completion=profile_completion,
         recent_records=recent_records,
+        upcoming=upcoming
     )
 
 @patient.route("/patient/profile", methods=["GET", "POST"])
@@ -111,4 +152,227 @@ def profile():
     return render_template(
         "patient/profile.html",
         form=form
+    )
+
+@patient.route(
+    "/patient/appointments/book",
+    methods=["GET", "POST"]
+)
+@login_required
+def book_appointment():
+
+    form = AppointmentForm()
+
+    hospitals = Hospital.query.order_by(Hospital.name).all()
+
+    form.hospital.choices = [
+        (h.id, h.name)
+        for h in hospitals
+    ]
+
+    form.doctor.choices = []
+
+    patient = Patient.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if form.validate_on_submit():
+        existing = Appointment.query.filter_by(
+            doctor_id=form.doctor.data,
+            appointment_date=form.appointment_date.data,
+            appointment_time=form.appointment_time.data
+        ).first()
+
+        if existing:
+
+            flash(
+                "Doctor already has an appointment at this time.",
+                "danger"
+            )
+
+            return render_template(
+                "patient/book_appointment.html",
+                form=form
+            )
+
+        appointment = Appointment(
+            patient_id=patient.id,
+            hospital_id=form.hospital.data,
+            doctor_id=form.doctor.data,
+            appointment_date=form.appointment_date.data,
+            appointment_time=form.appointment_time.data,
+            reason=form.reason.data
+        )
+
+        db.session.add(appointment)
+        db.session.commit()
+
+        flash(
+            "Appointment booked successfully!",
+            "success"
+        )
+
+        return redirect(
+            url_for("patient.dashboard")
+        )
+
+    return render_template(
+        "patient/book_appointment.html",
+        form=form
+    )
+@patient.route("/patient/get-doctors/<int:hospital_id>")
+@login_required
+def get_doctors(hospital_id):
+
+    doctors = Doctor.query.filter_by(
+        hospital_id=hospital_id
+    ).order_by(
+        Doctor.specialization
+    ).all()
+
+    return jsonify([
+        {
+            "id": doctor.id,
+            "name": doctor.user.name,
+            "specialization": doctor.specialization
+        }
+        for doctor in doctors
+    ])
+
+@patient.route("/patient/appointments")
+@login_required
+def appointments():
+
+    patient = Patient.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    appointments = Appointment.query.filter_by(
+        patient_id=patient.id
+    ).order_by(
+        Appointment.appointment_date.desc()
+    ).all()
+
+    return render_template(
+        "patient/appointments.html",
+        appointments=appointments
+    )
+
+@patient.route("/patient/appointments/cancel/<int:appointment_id>")
+@login_required
+def cancel_appointment(appointment_id):
+
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    patient = Patient.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if appointment.patient_id != patient.id:
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for("patient.appointments"))
+
+    if appointment.status == "Pending":
+        db.session.delete(appointment)
+        db.session.commit()
+
+        flash(
+            "Appointment cancelled successfully!",
+            "success"
+        )
+
+    else:
+        flash(
+            "Only pending appointments can be cancelled.",
+            "warning"
+        )
+
+    return redirect(url_for("patient.appointments"))
+
+@patient.route("/patient/prescriptions")
+@login_required
+def prescriptions():
+
+    patient = Patient.query.filter_by(
+        user_id=current_user.id
+    ).first_or_404()
+
+    prescriptions = (
+        Prescription.query
+        .join(Appointment)
+        .filter(Appointment.patient_id == patient.id)
+        .order_by(Prescription.created_at.desc())
+        .all()
+    )
+
+    return render_template(
+        "patient/prescriptions.html",
+        prescriptions=prescriptions
+    )
+
+@patient.route("/patient/prescription/pdf/<int:id>")
+@login_required
+def download_prescription(id):
+
+    prescription = Prescription.query.get_or_404(id)
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer)
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    story.append(
+        Paragraph(
+            "<b>MediLink Prescription</b>",
+            styles["Title"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"<b>Doctor:</b> {prescription.appointment.doctor.user.name}",
+            styles["Normal"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"<b>Patient:</b> {prescription.appointment.patient.user.name}",
+            styles["Normal"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"<b>Medicines:</b><br/>{prescription.medicines}",
+            styles["Normal"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"<b>Dosage:</b><br/>{prescription.dosage}",
+            styles["Normal"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"<b>Instructions:</b><br/>{prescription.instructions}",
+            styles["Normal"]
+        )
+    )
+
+    doc.build(story)
+
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name="Prescription.pdf",
+        mimetype="application/pdf"
     )

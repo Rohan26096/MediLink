@@ -1,0 +1,136 @@
+{% extends "doctor/doctor_base.html" %}
+
+{% block title %}
+Doctor Appointments
+{% endblock %}
+
+{% block page_title %}
+Doctor Appointments
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+<h2>Appointment Requests</h2>
+
+{% if appointments %}
+
+<table class="recent-table">
+
+<thead>
+
+<tr>
+<th>Patient</th>
+<th>Date</th>
+<th>Time</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for appointment in appointments %}
+
+<tr>
+
+<td>
+
+<a href="{{ url_for('doctor.patient_history',
+patient_id=appointment.patient.id) }}">
+
+{{ appointment.patient.user.name }}
+
+</a>
+
+</td>
+<td>{{ appointment.appointment_date.strftime("%d %b %Y") }}</td>
+
+<td>{{ appointment.appointment_time.strftime("%I:%M %p") }}</td>
+
+<td>
+
+{% if appointment.status=="Pending" %}
+
+<span style="color:orange;">
+{{ appointment.status }}
+</span>
+
+{% elif appointment.status=="Accepted" %}
+
+<span style="color:green;">
+{{ appointment.status }}
+</span>
+
+{% elif appointment.status=="Rejected" %}
+
+<span style="color:red;">
+{{ appointment.status }}
+</span>
+
+{% else %}
+
+<span style="color:blue;">
+{{ appointment.status }}
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if appointment.status=="Pending" %}
+
+<a href="{{ url_for('doctor.accept_appointment', id=appointment.id) }}"
+class="action-btn">
+
+Accept
+
+</a>
+
+<a href="{{ url_for('doctor.reject_appointment', id=appointment.id) }}"
+class="action-btn">
+
+Reject
+
+</a>
+
+{% endif %}
+
+<a href="{{ url_for('doctor.consultation', id=appointment.id) }}"
+class="action-btn">
+
+Notes
+
+</a>
+
+<a
+href="{{ url_for('doctor.prescription', appointment_id=appointment.id) }}"
+class="action-btn">
+
+Prescription
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% else %}
+
+<p>No appointments found.</p>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

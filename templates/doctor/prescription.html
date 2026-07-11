@@ -1,0 +1,44 @@
+{% extends "doctor/doctor_base.html" %}
+
+{% block title %}Prescription{% endblock %}
+
+{% block page_title %}Prescription{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+<h2>Prescription</h2>
+
+<form method="POST">
+
+{{ form.hidden_tag() }}
+
+<div class="form-group">
+{{ form.medicines.label }}
+{{ form.medicines(class="form-control", rows=5) }}
+</div>
+
+<br>
+
+<div class="form-group">
+{{ form.dosage.label }}
+{{ form.dosage(class="form-control", rows=5) }}
+</div>
+
+<br>
+
+<div class="form-group">
+{{ form.instructions.label }}
+{{ form.instructions(class="form-control", rows=5) }}
+</div>
+
+<br>
+
+{{ form.submit(class="action-btn") }}
+
+</form>
+
+</div>
+
+{% endblock %}

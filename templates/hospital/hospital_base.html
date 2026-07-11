@@ -1,0 +1,47 @@
+{% extends "dashboard_base.html" %}
+
+{% block sidebar %}
+
+<li>
+    <a href="{{ url_for('hospital.dashboard') }}">
+        <i class="fa-solid fa-house"></i>
+        Dashboard
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('hospital.profile') }}">
+        <i class="fa-solid fa-hospital"></i>
+        Hospital Profile
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('hospital.doctors') }}">
+        <i class="fa-solid fa-user-doctor"></i>
+        Manage Doctors
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('hospital.appointments') }}">
+        <i class="fa-solid fa-calendar-check"></i>
+        Appointments
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('hospital.analytics') }}">
+        <i class="fa-solid fa-chart-line"></i>
+        Analytics
+    </a>
+</li>
+
+<li>
+    <a href="{{ url_for('auth.logout') }}">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </a>
+</li>
+
+{% endblock %}

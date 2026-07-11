@@ -1,0 +1,72 @@
+{% extends "hospital/hospital_base.html" %}
+
+{% block title %}
+Add Doctor
+{% endblock %}
+
+{% block page_title %}
+Add Doctor
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+<h2>Add New Doctor</h2>
+
+<form method="POST">
+
+    {{ form.hidden_tag() }}
+
+    {{ form.name.label }}
+    {{ form.name(class="form-control") }}
+
+    <br><br>
+
+    {{ form.email.label }}
+    {{ form.email(class="form-control") }}
+
+    <br><br>
+
+    {{ form.password.label }}
+    {{ form.password(class="form-control") }}
+
+    <br><br>
+
+    {{ form.specialization.label }}
+    {{ form.specialization(class="form-control") }}
+
+    <br><br>
+
+    {{ form.qualification.label }}
+    {{ form.qualification(class="form-control") }}
+
+    <br><br>
+
+    {{ form.experience.label }}
+    {{ form.experience(class="form-control") }}
+
+    <br><br>
+
+    {{ form.department.label }}
+    {{ form.department(class="form-control") }}
+
+    <br><br>
+
+    {{ form.consultation_fee.label }}
+    {{ form.consultation_fee(class="form-control") }}
+
+    <br><br>
+
+    {{ form.bio.label }}
+    {{ form.bio(class="form-control") }}
+
+    <br><br>
+
+    {{ form.submit(class="action-btn") }}
+
+</form>
+
+</div>
+
+{% endblock %}

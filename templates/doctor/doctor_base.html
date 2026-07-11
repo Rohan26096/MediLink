@@ -3,37 +3,30 @@
 {% block sidebar %}
 
 <li>
-    <a href="{{ url_for('patient.dashboard') }}">
+    <a href="{{ url_for('doctor.dashboard') }}">
         <i class="fa-solid fa-house"></i>
         Dashboard
     </a>
 </li>
 
 <li>
-    <a href="{{ url_for('patient.profile') }}">
+    <a href="{{ url_for('doctor.profile') }}">
         <i class="fa-solid fa-user"></i>
         My Profile
     </a>
 </li>
 
 <li>
-    <a href="{{ url_for('medical_records.records') }}">
-        <i class="fa-solid fa-file-medical"></i>
-        Medical Records
-    </a>
-</li>
-
-<li>
-    <a href="{{ url_for('patient.appointments') }}">
+    <a href="{{ url_for('doctor.appointments') }}">
         <i class="fa-solid fa-calendar-check"></i>
         Appointments
     </a>
 </li>
 
 <li>
-    <a href="{{ url_for('patient.prescriptions') }}">
-        <i class="fa-solid fa-pills"></i>
-        Prescriptions
+    <a href="#">
+        <i class="fa-solid fa-notes-medical"></i>
+        Consultation Notes
     </a>
 </li>
 

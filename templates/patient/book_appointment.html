@@ -1,0 +1,100 @@
+ {% extends "patient/patient_base.html" %}
+
+{% block title %}
+Book Appointment
+{% endblock %}
+
+{% block page_title %}
+Book Appointment
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+    <h2>Book an Appointment</h2>
+
+    <form method="POST">
+
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.hospital.label }}
+            {{ form.hospital(class="form-control", id="hospital") }}
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            {{ form.doctor.label }}
+            {{ form.doctor(class="form-control", id="doctor") }}
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            {{ form.appointment_date.label }}
+            {{ form.appointment_date(class="form-control") }}
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            {{ form.appointment_time.label }}
+            {{ form.appointment_time(class="form-control") }}
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            {{ form.reason.label }}
+            {{ form.reason(class="form-control", rows="5") }}
+        </div>
+
+        <div class="alert alert-info">
+        Choose a hospital first.
+        Only doctors from that hospital will be available.
+        </div>
+
+        <br>
+
+        {{ form.submit(class="action-btn") }}
+
+    </form>
+
+</div>
+
+<script>
+
+const hospital = document.getElementById("hospital");
+const doctor = document.getElementById("doctor");
+
+hospital.addEventListener("change", function(){
+
+    fetch(`/patient/get-doctors/${hospital.value}`)
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        doctor.innerHTML = "";
+
+        data.forEach(function(item){
+
+            const option = document.createElement("option");
+
+            option.value = item.id;
+
+            option.textContent =
+                `${item.name} (${item.specialization})`;
+
+            doctor.appendChild(option);
+
+        });
+
+    });
+
+});
+
+</script>
+{% endblock %}

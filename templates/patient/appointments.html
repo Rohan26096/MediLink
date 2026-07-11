@@ -1,0 +1,145 @@
+{% extends "patient/patient_base.html" %}
+
+{% block title %}
+My Appointments
+{% endblock %}
+
+{% block page_title %}
+My Appointments
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+    <div class="section-header">
+
+        <h2>My Appointments</h2>
+
+        <a href="{{ url_for('patient.book_appointment') }}" class="action-btn">
+            <i class="fa-solid fa-plus"></i>
+            Book Appointment
+        </a>
+
+    </div>
+
+    {% if appointments %}
+
+    <table class="recent-table">
+
+        <thead>
+
+            <tr>
+                <th>Hospital</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+                <th>Doctor Notes</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for appointment in appointments %}
+
+            <tr>
+
+                <td>{{ appointment.hospital.name }}</td>
+
+                <td>{{ appointment.doctor.user.name }}</td>
+
+                <td>{{ appointment.appointment_date.strftime("%d %b %Y") }}</td>
+
+                <td>{{ appointment.appointment_time.strftime("%I:%M %p") }}</td>
+
+                <td>
+
+                    {% if appointment.status == "Pending" %}
+
+                        <span style="color: orange;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% elif appointment.status == "Accepted" %}
+
+                        <span style="color: green;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% elif appointment.status == "Rejected" %}
+
+                        <span style="color: red;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% elif appointment.status == "Completed" %}
+
+                        <span style="color: blue;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% else %}
+
+                        {{ appointment.status }}
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if appointment.status == "Pending" %}
+
+                        <a
+                            href="{{ url_for('patient.cancel_appointment', appointment_id=appointment.id) }}"
+                            class="action-btn"
+                            onclick="return confirm('Cancel this appointment?');"
+                        >
+                            <i class="fa-solid fa-xmark"></i>
+                            Cancel
+                        </a>
+
+                    {% else %}
+
+                        -
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if appointment.consultation_notes %}
+
+                        {{ appointment.consultation_notes }}
+
+                    {% else %}
+
+                        <span style="color: gray;">
+                            No notes yet
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <p>No appointments booked yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

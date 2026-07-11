@@ -1,9 +1,109 @@
-{% extends "base.html" %}
+{% extends "admin/admin_base.html" %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}
+Admin Dashboard
+{% endblock %}
 
-{% block content %}
+{% block page_title %}
+Admin Dashboard
+{% endblock %}
 
-<h1>Admin Dashboard</h1>
+{% block dashboard_content %}
+
+<div class="dashboard-header">
+
+    <h2>Welcome Admin 👑</h2>
+
+    <p>Manage the entire MediLink platform.</p>
+
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <i class="fa-solid fa-users"></i>
+        <h2>{{ total_users }}</h2>
+        <p>Total Users</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-user"></i>
+        <h2>{{ total_patients }}</h2>
+        <p>Patients</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-user-doctor"></i>
+        <h2>{{ total_doctors }}</h2>
+        <p>Doctors</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-hospital"></i>
+        <h2>{{ total_hospitals }}</h2>
+        <p>Hospitals</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-calendar-check"></i>
+        <h2>{{ total_appointments }}</h2>
+        <p>Appointments</p>
+    </div>
+
+</div>
+
+<div class="dashboard-section">
+
+    <h2>Appointment Analytics</h2>
+
+    <canvas id="appointmentChart"></canvas>
+
+</div>
+
+<script>
+
+const ctx = document.getElementById("appointmentChart");
+
+const appointmentData = {{ [
+    appointment_status["Pending"],
+    appointment_status["Accepted"],
+    appointment_status["Rejected"],
+    appointment_status["Completed"]
+] | tojson }};
+
+new Chart(ctx, {
+
+    type: "doughnut",
+
+    data: {
+
+        labels: [
+            "Pending",
+            "Accepted",
+            "Rejected",
+            "Completed"
+        ],
+
+        datasets: [{
+
+            label: "Appointments",
+
+            data: appointmentData
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false
+
+    }
+
+});
+
+</script>
 
 {% endblock %}

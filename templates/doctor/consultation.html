@@ -1,0 +1,60 @@
+{% extends "doctor/doctor_base.html" %}
+
+{% block title %}
+Consultation Notes
+{% endblock %}
+
+{% block page_title %}
+Consultation Notes
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+<h2>Consultation</h2>
+
+<form method="POST">
+
+<label>Patient</label>
+
+<input
+type="text"
+value="{{ appointment.patient.user.name }}"
+class="form-control"
+disabled>
+
+<br>
+
+<label>Appointment Status</label>
+
+<input
+type="text"
+value="{{ appointment.status }}"
+class="form-control"
+disabled>
+
+<br>
+
+<label>Consultation Notes</label>
+
+<textarea
+name="notes"
+rows="10"
+class="form-control">{{ appointment.consultation_notes }}</textarea>
+
+<br>
+
+<button
+type="submit"
+class="action-btn">
+
+Save Consultation
+
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}

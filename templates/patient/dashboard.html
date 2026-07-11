@@ -44,6 +44,60 @@ Patient Dashboard
     </div>
 
 </div>
+{% if upcoming %}
+
+<div class="dashboard-section">
+
+    <h3>Upcoming Appointment</h3>
+
+    <div class="profile-card">
+
+        <p>
+            <strong>Doctor:</strong>
+            {{ upcoming.doctor.user.name }}
+        </p>
+
+        <p>
+            <strong>Hospital:</strong>
+            {{ upcoming.hospital.name }}
+        </p>
+
+        <p>
+            <strong>Date:</strong>
+            {{ upcoming.appointment_date.strftime("%d %b %Y") }}
+        </p>
+
+        <p>
+            <strong>Time:</strong>
+            {{ upcoming.appointment_time.strftime("%I:%M %p") }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+
+            {% if upcoming.status == "Pending" %}
+                <span style="color: orange;">Pending</span>
+
+            {% elif upcoming.status == "Accepted" %}
+                <span style="color: green;">Accepted</span>
+
+            {% elif upcoming.status == "Completed" %}
+                <span style="color: blue;">Completed</span>
+
+            {% elif upcoming.status == "Rejected" %}
+                <span style="color: red;">Rejected</span>
+
+            {% else %}
+                {{ upcoming.status }}
+            {% endif %}
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endif %}
 
 <!-- Quick Actions -->
 

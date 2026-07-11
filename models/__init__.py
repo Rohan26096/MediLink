@@ -7,3 +7,5 @@ from models.patient import Patient
 from models.medical_record import MedicalRecord
 from .doctor import Doctor
 from .hospital import Hospital
+from .appointment import Appointment
+from .prescription import Prescription

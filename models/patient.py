@@ -35,4 +35,11 @@ class Patient(db.Model):
         lazy=True,
         cascade="all, delete-orphan"
     )
+
+    appointments = db.relationship(
+        "Appointment",
+        backref="patient",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
     

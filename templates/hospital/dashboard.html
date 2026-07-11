@@ -1,9 +1,110 @@
-{% extends "base.html" %}
+{% extends "hospital/hospital_base.html" %}
 
-{% block title %}Hospital Dashboard{% endblock %}
+{% block title %}
+Hospital Dashboard
+{% endblock %}
 
-{% block content %}
+{% block page_title %}
+Hospital Dashboard
+{% endblock %}
 
-<h1>Hospital Dashboard</h1>
+{% block dashboard_content %}
+
+<div class="dashboard-header">
+
+    <h2>Hospital Dashboard 🏥</h2>
+
+    <p>Monitor doctors, patients and appointments.</p>
+
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <i class="fa-solid fa-user-doctor"></i>
+        <h2>{{ doctors_count }}</h2>
+        <p>Doctors</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-users"></i>
+        <h2>{{ patients_count }}</h2>
+        <p>Patients</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-calendar-check"></i>
+        <h2>{{ appointments_count }}</h2>
+        <p>Appointments</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-clock"></i>
+        <h2>{{ pending_count }}</h2>
+        <p>Pending</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-circle-check"></i>
+        <h2>{{ completed_count }}</h2>
+        <p>Completed</p>
+    </div>
+
+</div>
+
+<div class="dashboard-section">
+
+    <h2>Recent Appointments</h2>
+
+    {% if latest_appointments %}
+
+    <table class="recent-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Status</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for appointment in latest_appointments %}
+
+            <tr>
+
+                <td>{{ appointment.patient.user.name }}</td>
+
+                <td>{{ appointment.doctor.user.name }}</td>
+
+                <td>
+
+                    {{ appointment.appointment_date.strftime("%d %b %Y") }}
+
+                </td>
+
+                <td>{{ appointment.status }}</td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <p>No appointments yet.</p>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

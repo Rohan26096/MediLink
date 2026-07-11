@@ -1,0 +1,65 @@
+{% extends "doctor/doctor_base.html" %}
+
+{% block title %}Doctor Profile{% endblock %}
+
+{% block page_title %}Doctor Profile{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-section">
+
+<h2>My Profile</h2>
+
+<form method="POST">
+
+{{ form.hidden_tag() }}
+
+<div class="form-group">
+{{ form.specialization.label }}
+{{ form.specialization(class="form-control") }}
+</div>
+
+<br>
+
+<div class="form-group">
+{{ form.qualification.label }}
+{{ form.qualification(class="form-control") }}
+</div>
+
+<br>
+
+<div class="form-group">
+{{ form.experience.label }}
+{{ form.experience(class="form-control") }}
+</div>
+
+<br>
+
+<div class="form-group">
+{{ form.department.label }}
+{{ form.department(class="form-control") }}
+</div>
+
+<br>
+
+<div class="form-group">
+{{ form.consultation_fee.label }}
+{{ form.consultation_fee(class="form-control") }}
+</div>
+
+<br>
+
+<div class="form-group">
+{{ form.bio.label }}
+{{ form.bio(class="form-control", rows=6) }}
+</div>
+
+<br>
+
+{{ form.submit(class="action-btn") }}
+
+</form>
+
+</div>
+
+{% endblock %}

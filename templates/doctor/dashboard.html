@@ -1,9 +1,61 @@
-{% extends "base.html" %}
+{% extends "doctor/doctor_base.html" %}
 
-{% block title %}Doctor Dashboard{% endblock %}
+{% block title %}
+Doctor Dashboard
+{% endblock %}
 
-{% block content %}
+{% block page_title %}
+Doctor Dashboard
+{% endblock %}
 
-<h1>Doctor Dashboard</h1>
+{% block dashboard_content %}
+
+<div class="dashboard-header">
+    <h2>Welcome Dr. {{ current_user.name }} 👨‍⚕️</h2>
+    <p>Manage your appointments and consultation records.</p>
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <i class="fa-solid fa-calendar-check"></i>
+        <h2>{{ total_appointments }}</h2>
+        <p>Total Appointments</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-clock"></i>
+        <h2>{{ pending }}</h2>
+        <p>Pending</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-circle-check"></i>
+        <h2>{{ accepted }}</h2>
+        <p>Accepted</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <h2>{{ rejected }}</h2>
+        <p>Rejected</p>
+    </div>
+
+</div>
+
+<div class="dashboard-section">
+
+    <h3>Quick Actions</h3>
+
+    <div class="action-buttons">
+
+        <a href="{{ url_for('doctor.appointments') }}" class="action-btn">
+            <i class="fa-solid fa-calendar-days"></i>
+            View Appointments
+        </a>
+
+    </div>
+
+</div>
 
 {% endblock %}
