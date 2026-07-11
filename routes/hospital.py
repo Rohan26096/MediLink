@@ -30,51 +30,38 @@ def dashboard():
 
     hospital = Hospital.query.first()
 
-    doctors_count = Doctor.query.filter_by(
+    doctor_count = Doctor.query.filter_by(
         hospital_id=hospital.id
     ).count()
 
-    appointments_count = Appointment.query.filter_by(
+    appointment_count = Appointment.query.filter_by(
         hospital_id=hospital.id
     ).count()
 
-    pending_count = Appointment.query.filter_by(
-        hospital_id=hospital.id,
-        status="Pending"
-    ).count()
-
-    completed_count = Appointment.query.filter_by(
-        hospital_id=hospital.id,
-        status="Completed"
-    ).count()
-
-    patients_count = (
+    patient_count = (
         db.session.query(Appointment.patient_id)
         .filter_by(hospital_id=hospital.id)
         .distinct()
         .count()
     )
 
-    latest_appointments = (
-        Appointment.query.filter_by(
-            hospital_id=hospital.id
-        )
-        .order_by(
-            Appointment.appointment_date.desc(),
-            Appointment.appointment_time.desc()
-        )
-        .limit(5)
-        .all()
-    )
+    pending = Appointment.query.filter_by(
+        hospital_id=hospital.id,
+        status="Pending"
+    ).count()
+
+    completed = Appointment.query.filter_by(
+        hospital_id=hospital.id,
+        status="Completed"
+    ).count()
 
     return render_template(
         "hospital/dashboard.html",
-        doctors_count=doctors_count,
-        patients_count=patients_count,
-        appointments_count=appointments_count,
-        pending_count=pending_count,
-        completed_count=completed_count,
-        latest_appointments=latest_appointments
+        doctor_count=doctor_count,
+        appointment_count=appointment_count,
+        patient_count=patient_count,
+        pending=pending,
+        completed=completed
     )
 
 @hospital.route(
@@ -125,8 +112,11 @@ def profile():
 @hospital.route("/hospital/doctors")
 @login_required
 def doctors():
-    doctors = Doctor.query.order_by(
-        Doctor.specialization
+
+    hospital = Hospital.query.first()
+
+    doctors = Doctor.query.filter_by(
+        hospital_id=hospital.id
     ).all()
 
     return render_template(
@@ -288,4 +278,25 @@ def delete_doctor(doctor_id):
 
     return redirect(
         url_for("hospital.doctors")
+    )
+
+@hospital.route("/hospital/appointments")
+@login_required
+def appointments():
+
+    hospital = Hospital.query.first()
+
+    appointments = (
+        Appointment.query.filter_by(
+            hospital_id=hospital.id
+        )
+        .order_by(
+            Appointment.appointment_date.desc()
+        )
+        .all()
+    )
+
+    return render_template(
+        "hospital/appointments.html",
+        appointments=appointments
     )

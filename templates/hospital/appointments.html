@@ -1,10 +1,127 @@
 {% extends "hospital/hospital_base.html" %}
 
-{% block title %}Appointments{% endblock %}
+{% block title %}
+Hospital Appointments
+{% endblock %}
 
-{% block page_title %}Appointments{% endblock %}
+{% block page_title %}
+Hospital Appointments
+{% endblock %}
 
 {% block dashboard_content %}
-<h2>Appointments</h2>
-<p>This feature will be implemented in the Appointment module.</p>
+
+<div class="dashboard-section">
+
+    <h2>Appointments</h2>
+
+    {% if appointments %}
+
+    <table class="recent-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th>Prescription</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for appointment in appointments %}
+
+            <tr>
+
+                <td>
+                    {{ appointment.patient.user.name }}
+                </td>
+
+                <td>
+                    {{ appointment.doctor.user.name }}
+                </td>
+
+                <td>
+                    {{ appointment.appointment_date.strftime("%d %b %Y") }}
+                </td>
+
+                <td>
+                    {{ appointment.appointment_time.strftime("%I:%M %p") }}
+                </td>
+
+                <td>
+
+                    {% if appointment.status == "Pending" %}
+
+                        <span style="color:orange;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% elif appointment.status == "Accepted" %}
+
+                        <span style="color:green;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% elif appointment.status == "Rejected" %}
+
+                        <span style="color:red;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% else %}
+
+                        <span style="color:#2563eb;">
+                            {{ appointment.status }}
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {{ appointment.reason }}
+
+                </td>
+
+                <td>
+
+                    {% if appointment.prescription %}
+
+                        <i class="fa-solid fa-circle-check"
+                           style="color:green;"></i>
+
+                    {% else %}
+
+                        <i class="fa-solid fa-circle-xmark"
+                           style="color:red;"></i>
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <p>No appointments found.</p>
+
+    {% endif %}
+
+</div>
+
 {% endblock %}

@@ -7,7 +7,7 @@ from wtforms import (
     SubmitField
 )
 from wtforms.validators import Optional, NumberRange
-
+from flask_wtf.file import FileField, FileAllowed
 
 class PatientProfileForm(FlaskForm):
 
@@ -55,3 +55,13 @@ class PatientProfileForm(FlaskForm):
     medical_history = TextAreaField("Medical History")
 
     submit = SubmitField("Save Profile")
+
+    profile_image = FileField(
+    "Profile Photo",
+    validators=[
+        FileAllowed(
+            ["jpg", "jpeg", "png"],
+            "Images only!"
+        )
+    ]
+)

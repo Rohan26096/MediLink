@@ -28,35 +28,37 @@ doctor = Blueprint("doctor", __name__)
 @login_required
 def dashboard():
 
-    doctor_profile = Doctor.query.filter_by(
+    doctor = Doctor.query.filter_by(
         user_id=current_user.id
     ).first()
 
-    total_appointments = Appointment.query.filter_by(
-        doctor_id=doctor_profile.id
+    todays_appointments = Appointment.query.filter_by(
+        doctor_id=doctor.id
     ).count()
 
     pending = Appointment.query.filter_by(
-        doctor_id=doctor_profile.id,
+        doctor_id=doctor.id,
         status="Pending"
     ).count()
 
-    accepted = Appointment.query.filter_by(
-        doctor_id=doctor_profile.id,
-        status="Accepted"
+    completed = Appointment.query.filter_by(
+        doctor_id=doctor.id,
+        status="Completed"
     ).count()
 
-    rejected = Appointment.query.filter_by(
-        doctor_id=doctor_profile.id,
-        status="Rejected"
-    ).count()
+    total_patients = (
+        db.session.query(Appointment.patient_id)
+        .filter_by(doctor_id=doctor.id)
+        .distinct()
+        .count()
+    )
 
     return render_template(
         "doctor/dashboard.html",
-        total_appointments=total_appointments,
+        todays_appointments=todays_appointments,
         pending=pending,
-        accepted=accepted,
-        rejected=rejected
+        completed=completed,
+        total_patients=total_patients
     )
 
 
@@ -64,15 +66,14 @@ def dashboard():
 @login_required
 def appointments():
 
-    doctor_profile = Doctor.query.filter_by(
+    doctor = Doctor.query.filter_by(
         user_id=current_user.id
     ).first()
 
     appointments = Appointment.query.filter_by(
-        doctor_id=doctor_profile.id
+        doctor_id=doctor.id
     ).order_by(
-        Appointment.appointment_date,
-        Appointment.appointment_time
+        Appointment.appointment_date.desc()
     ).all()
 
     return render_template(
@@ -80,27 +81,26 @@ def appointments():
         appointments=appointments
     )
 
-
-@doctor.route("/doctor/appointments/accept/<int:id>")
+@doctor.route("/doctor/appointment/accept/<int:appointment_id>")
 @login_required
-def accept_appointment(id):
+def accept_appointment(appointment_id):
 
-    appointment = Appointment.query.get_or_404(id)
+    appointment = Appointment.query.get_or_404(appointment_id)
 
     appointment.status = "Accepted"
 
     db.session.commit()
 
-    flash("Appointment accepted successfully.", "success")
+    flash("Appointment accepted.", "success")
 
     return redirect(url_for("doctor.appointments"))
 
 
-@doctor.route("/doctor/appointments/reject/<int:id>")
+@doctor.route("/doctor/appointment/reject/<int:appointment_id>")
 @login_required
-def reject_appointment(id):
+def reject_appointment(appointment_id):
 
-    appointment = Appointment.query.get_or_404(id)
+    appointment = Appointment.query.get_or_404(appointment_id)
 
     appointment.status = "Rejected"
 
@@ -110,6 +110,19 @@ def reject_appointment(id):
 
     return redirect(url_for("doctor.appointments"))
 
+@doctor.route("/doctor/appointment/complete/<int:appointment_id>")
+@login_required
+def complete_appointment(appointment_id):
+
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    appointment.status = "Completed"
+
+    db.session.commit()
+
+    flash("Appointment completed.", "success")
+
+    return redirect(url_for("doctor.appointments"))
 
 @doctor.route(
     "/doctor/appointments/consultation/<int:id>",
@@ -268,3 +281,4 @@ def patient_history(patient_id):
         appointments=appointments,
         prescriptions=prescriptions
     )
+

@@ -3,9 +3,11 @@ from flask import (
     render_template,
     flash,
     redirect,
-    url_for
+    url_for,
+    jsonify,
+    send_file,
+    current_app
 )
-from flask import jsonify
 from forms.appointment_forms import AppointmentForm
 
 from models.appointment import Appointment
@@ -21,14 +23,16 @@ from models.prescription import Prescription
 
 from io import BytesIO
 
-from flask import send_file
-
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph
 )
 
 from reportlab.lib.styles import getSampleStyleSheet
+import os
+import uuid
+
+from werkzeug.utils import secure_filename
 
 patient = Blueprint("patient", __name__)
 
@@ -133,10 +137,35 @@ def profile():
         patient.allergies = form.allergies.data
         patient.medical_history = form.medical_history.data
 
+
+        if form.profile_image.data:
+
+            image = form.profile_image.data
+
+            filename = (
+                f"{uuid.uuid4().hex}_"
+                f"{secure_filename(image.filename)}"
+            )
+
+            upload_path = os.path.join(
+                current_app.root_path,
+                "static",
+                "uploads",
+                "profiles"
+            )
+
+            os.makedirs(upload_path, exist_ok=True)
+
+            image.save(
+                os.path.join(upload_path, filename)
+            )
+
+            current_user.profile_image = filename
+
         db.session.add(patient)
         db.session.commit()
-
         flash("Profile updated successfully!", "success")
+        return redirect(url_for("patient.profile"))
 
     elif patient.id:
 

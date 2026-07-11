@@ -45,13 +45,65 @@ Doctor Dashboard
 
 <div class="dashboard-section">
 
+    <h2>Today's Summary</h2>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-user-clock"></i>
+
+            <h2>{{ pending }}</h2>
+
+            <p>Pending Appointments</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <h2>{{ completed }}</h2>
+
+            <p>Completed Appointments</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-users"></i>
+
+            <h2>{{ total_patients }}</h2>
+
+            <p>Total Patients</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="dashboard-section">
+
     <h3>Quick Actions</h3>
 
     <div class="action-buttons">
 
         <a href="{{ url_for('doctor.appointments') }}" class="action-btn">
+
             <i class="fa-solid fa-calendar-days"></i>
+
             View Appointments
+
+        </a>
+
+        <a href="{{ url_for('doctor.schedule') }}" class="action-btn">
+
+            <i class="fa-solid fa-calendar-week"></i>
+
+            My Schedule
+
         </a>
 
     </div>

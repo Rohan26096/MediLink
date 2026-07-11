@@ -17,7 +17,6 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <body>
 
@@ -38,7 +37,6 @@
             <ul>
 
                 {% block sidebar %}
-
                 {% endblock %}
 
             </ul>
@@ -54,17 +52,27 @@
             <header class="topbar">
 
                 <h2>
+
                     {% block page_title %}
                     Dashboard
                     {% endblock %}
+
                 </h2>
 
                 <div class="profile">
 
+                    <button id="theme-toggle" class="theme-btn">
+
+                        <i class="fa-solid fa-moon"></i>
+
+                    </button>
+
                     <i class="fa-solid fa-bell"></i>
 
                     <span>
+
                         {{ current_user.name }}
+
                     </span>
 
                 </div>
@@ -74,7 +82,6 @@
             <section class="content">
 
                 {% block dashboard_content %}
-
                 {% endblock %}
 
             </section>
@@ -82,6 +89,49 @@
         </main>
 
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        const button = document.getElementById("theme-toggle");
+
+        const body = document.body;
+
+        if (localStorage.getItem("theme") === "dark") {
+
+            body.classList.add("dark-mode");
+
+            button.innerHTML =
+                '<i class="fa-solid fa-sun"></i>';
+
+        }
+
+        button.addEventListener("click", function () {
+
+            body.classList.toggle("dark-mode");
+
+            if (body.classList.contains("dark-mode")) {
+
+                localStorage.setItem("theme", "dark");
+
+                button.innerHTML =
+                    '<i class="fa-solid fa-sun"></i>';
+
+            }
+
+            else {
+
+                localStorage.setItem("theme", "light");
+
+                button.innerHTML =
+                    '<i class="fa-solid fa-moon"></i>';
+
+            }
+
+        });
+
+    </script>
 
 </body>
 

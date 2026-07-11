@@ -46,3 +46,8 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         from werkzeug.security import check_password_hash
         return check_password_hash(self.password_hash, password)
+    
+    profile_image = db.Column(
+        db.String(255),
+        default="default.png"
+    )

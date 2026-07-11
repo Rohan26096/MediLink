@@ -2,42 +2,121 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>
         {% block title %}MediLink{% endblock %}
     </title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
 
-    <link rel="stylesheet"
+    <link
+        rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    {% block extra_css %}{% endblock %}
+    {% block extra_css %}
+    {% endblock %}
 
 </head>
 
 <body>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
 
-            {% for category, message in messages %}
+    {% if messages %}
 
-                <div class="flash {{ category }}">
-                    {{ message }}
-                </div>
+    <div id="toast-container">
 
-            {% endfor %}
+        {% for category, message in messages %}
 
-        {% endif %}
+        <div class="toast {{ category }}">
+
+            {{ message }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
     {% endwith %}
-    
+
+    <button id="theme-toggle" class="theme-btn">
+
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
     {% block content %}
     {% endblock %}
 
     {% block extra_js %}
     {% endblock %}
+
+    <script>
+
+        setTimeout(function () {
+
+            const container = document.getElementById("toast-container");
+
+            if (container) {
+
+                container.remove();
+
+            }
+
+        }, 3000);
+
+    </script>
+
+    <script>
+
+        const button = document.getElementById("theme-toggle");
+
+        const body = document.body;
+
+        if (localStorage.getItem("theme") === "dark") {
+
+            body.classList.add("dark-mode");
+
+            button.innerHTML =
+                '<i class="fa-solid fa-sun"></i>';
+
+        }
+
+        button.addEventListener("click", function () {
+
+            body.classList.toggle("dark-mode");
+
+            if (body.classList.contains("dark-mode")) {
+
+                localStorage.setItem("theme", "dark");
+
+                button.innerHTML =
+                    '<i class="fa-solid fa-sun"></i>';
+
+            }
+
+            else {
+
+                localStorage.setItem("theme", "light");
+
+                button.innerHTML =
+                    '<i class="fa-solid fa-moon"></i>';
+
+            }
+
+        });
+
+    </script>
 
 </body>
 
