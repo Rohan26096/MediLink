@@ -15,6 +15,21 @@ Book Appointment
     <h2>Book an Appointment</h2>
 
     <form method="POST">
+        <div class="form-group">
+
+        <label>
+
+        Search Doctor
+
+        </label>
+
+        <input
+        type="text"
+        name="search"
+        class="form-control"
+        placeholder="Enter doctor name"
+        value="{{ request.args.get('search','') }}">
+        </div>
 
         {{ form.hidden_tag() }}
 
@@ -76,8 +91,15 @@ hospital.addEventListener("change", function(){
     .then(response => response.json())
 
     .then(data => {
+        if(data.length === 0){
 
-        doctor.innerHTML = "";
+            doctor.innerHTML =
+                '<option value="">No Doctors Available</option>';
+
+            return;
+        }
+
+        doctor.innerHTML = '<option value="">Select Doctor</option>';
 
         data.forEach(function(item){
 

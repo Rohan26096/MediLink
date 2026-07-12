@@ -15,6 +15,36 @@ My Appointments
     <div class="section-header">
 
         <h2>My Appointments</h2>
+        <div class="action-buttons">
+
+            <a href="{{ url_for('patient.appointments') }}"
+            class="action-btn">
+                All
+            </a>
+
+            <a href="{{ url_for('patient.appointments', status='Pending') }}"
+            class="action-btn">
+                Pending
+            </a>
+
+            <a href="{{ url_for('patient.appointments', status='Accepted') }}"
+            class="action-btn">
+                Accepted
+            </a>
+
+            <a href="{{ url_for('patient.appointments', status='Completed') }}"
+            class="action-btn">
+                Completed
+            </a>
+
+            <a href="{{ url_for('patient.appointments', status='Rejected') }}"
+            class="action-btn">
+                Rejected
+            </a>
+
+        </div>
+
+        <br>
 
         <a href="{{ url_for('patient.book_appointment') }}" class="action-btn">
             <i class="fa-solid fa-plus"></i>

@@ -47,6 +47,27 @@ def home():
 import utils.email
 utils.email.mail = mail
 
+with app.app_context():
+
+    admin = User.query.filter_by(
+        email="hospital@medilink.com"
+    ).first()
+
+    if not admin:
+
+        admin = User(
+            name="City Hospital",
+            email="hospital@medilink.com",
+            role="hospital_admin"
+        )
+
+        admin.set_password("123456")
+
+        db.session.add(admin)
+        db.session.commit()
+
+        print("Hospital Admin Created")
+        
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

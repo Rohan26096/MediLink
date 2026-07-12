@@ -10,7 +10,8 @@ from wtforms import (
 )
 
 from wtforms.validators import DataRequired, ValidationError
-
+from wtforms.validators import ValidationError
+from datetime import date
 
 class AppointmentForm(FlaskForm):
 
@@ -44,6 +45,14 @@ class AppointmentForm(FlaskForm):
     submit = SubmitField("Book Appointment")
 
     def validate_appointment_date(self, field):
+
+        if field.data < date.today():
+            raise ValidationError(
+                "Appointment date cannot be in the past."
+            )
+
+
+    def validate_appointment_date(form, field):
 
         if field.data < date.today():
             raise ValidationError(

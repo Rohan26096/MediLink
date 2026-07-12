@@ -29,7 +29,20 @@ hospital = Blueprint("hospital", __name__)
 @login_required
 def dashboard():
 
-    hospital = Hospital.query.first()
+    hospital = Hospital.query.filter_by(
+        admin_id=current_user.id
+    ).first()
+
+    if not hospital:
+
+        flash(
+            "Please complete your hospital profile first.",
+            "warning"
+        )
+
+        return redirect(
+            url_for("hospital.profile")
+        )
 
     doctor_count = Doctor.query.filter_by(
         hospital_id=hospital.id
@@ -77,10 +90,14 @@ def profile():
     hospital = Hospital.query.first()
 
     if not hospital:
-        hospital = Hospital()
+
+        hospital = Hospital(
+            admin_id=current_user.id
+        )
 
     if form.validate_on_submit():
 
+        hospital.admin_id = current_user.id
         hospital.name = form.name.data
         hospital.email = form.email.data
         hospital.phone = form.phone.data

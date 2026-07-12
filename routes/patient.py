@@ -6,7 +6,8 @@ from flask import (
     url_for,
     jsonify,
     send_file,
-    current_app
+    current_app,
+    request
 )
 from forms.appointment_forms import AppointmentForm
 
@@ -32,6 +33,7 @@ from reportlab.platypus import (
 from reportlab.lib.styles import getSampleStyleSheet
 import os
 import uuid
+from models.user import User
 
 from werkzeug.utils import secure_filename
 
@@ -192,6 +194,10 @@ def profile():
 def book_appointment():
 
     form = AppointmentForm()
+    search = request.args.get(
+        "search",
+        ""
+    )
 
     hospitals = Hospital.query.order_by(Hospital.name).all()
 
@@ -207,10 +213,11 @@ def book_appointment():
     ).first()
 
     if form.validate_on_submit():
-        existing = Appointment.query.filter_by(
-            doctor_id=form.doctor.data,
-            appointment_date=form.appointment_date.data,
-            appointment_time=form.appointment_time.data
+        existing = Appointment.query.filter(
+            Appointment.doctor_id == form.doctor.data,
+            Appointment.appointment_date == form.appointment_date.data,
+            Appointment.appointment_time == form.appointment_time.data,
+            Appointment.status != "Rejected"
         ).first()
 
         if existing:
@@ -306,18 +313,39 @@ def appointments():
     ).first()
 
     if not patient:
-        flash("Please complete your profile first.", "warning")
-        return redirect(url_for("patient.profile"))
 
-    appointments = Appointment.query.filter_by(
+        flash(
+            "Please complete your profile first.",
+            "warning"
+        )
+
+        return redirect(
+            url_for("patient.profile")
+        )
+
+    status = request.args.get("status")
+
+    query = Appointment.query.filter_by(
         patient_id=patient.id
-    ).order_by(
-        Appointment.appointment_date.desc()
-    ).all()
+    )
+
+    if status:
+
+        query = query.filter_by(
+            status=status
+        )
+
+    appointments = (
+        query.order_by(
+            Appointment.appointment_date.desc()
+        )
+        .all()
+    )
 
     return render_template(
         "patient/appointments.html",
-        appointments=appointments
+        appointments=appointments,
+        selected_status=status
     )
 
 @patient.route("/patient/appointments/cancel/<int:appointment_id>")
