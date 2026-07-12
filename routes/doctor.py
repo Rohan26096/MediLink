@@ -91,13 +91,11 @@ def accept_appointment(appointment_id):
     appointment.status = "Accepted"
 
     db.session.commit()
-    send_email(
-
-        appointment.patient.user.email,
-
-        "Appointment Accepted",
-
-        f"""
+    try:
+        send_email(
+            appointment.patient.user.email,
+            "Appointment Accepted",
+            f"""
     Hi {appointment.patient.user.name},
 
     Your appointment has been accepted.
@@ -115,7 +113,9 @@ def accept_appointment(appointment_id):
 
     -MediLink Team
     """
-    )
+        )
+    except Exception as e:
+        print(e)
 
     flash("Appointment accepted.", "success")
 
@@ -131,13 +131,14 @@ def reject_appointment(appointment_id):
     appointment.status = "Rejected"
 
     db.session.commit()
-    send_email(
+    try:
+        send_email(
 
-        appointment.patient.user.email,
+            appointment.patient.user.email,
 
-        "Appointment Rejected",
+            "Appointment Rejected",
 
-        f"""
+            f"""
     Hi {appointment.patient.user.name},
 
     Unfortunately your appointment request
@@ -148,7 +149,9 @@ def reject_appointment(appointment_id):
 
     -MediLink Team
     """
-    )
+        )
+    except Exception as e:
+        print(e)
 
     flash("Appointment rejected.", "warning")
 
@@ -269,13 +272,14 @@ def prescription(appointment_id):
 
         db.session.add(prescription)
         db.session.commit()
-        send_email(
+        try:
+            send_email(
 
-            appointment.patient.user.email,
+                appointment.patient.user.email,
 
-            "Prescription Uploaded",
+                "Prescription Uploaded",
 
-            f"""
+                f"""
         Hi {appointment.patient.user.name},
 
         Dr. {appointment.doctor.user.name}
@@ -288,7 +292,9 @@ def prescription(appointment_id):
 
         -MediLink Team
         """
-        )
+            )
+        except Exception as e:
+            print(e)
 
         flash(
             "Prescription saved successfully.",

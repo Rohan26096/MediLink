@@ -1,19 +1,13 @@
 from flask_mail import Message
-from app import mail
+
+mail = None
 
 
-def send_email(
-    recipient,
-    subject,
-    body
-):
+def send_email(recipient, subject, body):
 
     msg = Message(
-
         subject,
-
         recipients=[recipient]
-
     )
 
     msg.body = body

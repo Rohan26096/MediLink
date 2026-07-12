@@ -305,6 +305,10 @@ def appointments():
         user_id=current_user.id
     ).first()
 
+    if not patient:
+        flash("Please complete your profile first.", "warning")
+        return redirect(url_for("patient.profile"))
+
     appointments = Appointment.query.filter_by(
         patient_id=patient.id
     ).order_by(

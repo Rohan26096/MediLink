@@ -125,13 +125,6 @@ def doctors():
         doctors=doctors
     )
 
-
-@hospital.route("/hospital/appointments")
-@login_required
-def appointments():
-    return render_template("hospital/appointments.html")
-
-
 @hospital.route("/hospital/analytics")
 @login_required
 def analytics():

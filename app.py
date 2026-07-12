@@ -19,12 +19,8 @@ app.config.from_object(Config)
 
 # Initialize extensions
 db.init_app(app)
-mail = Mail()
 
-mail.init_app(app)
-
-mail = Mail()
-mail.init_app(app)
+mail = Mail(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -48,6 +44,8 @@ def load_user(user_id):
 def home():
     return render_template("index.html")
 
+import utils.email
+utils.email.mail = mail
 
 if __name__ == "__main__":
     with app.app_context():

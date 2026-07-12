@@ -36,10 +36,11 @@ def register():
 
         db.session.add(user)
         db.session.commit()
-        send_email(
-            user.email,
-            "Welcome to MediLink",
-            f"""
+        try:
+            send_email(
+                user.email,
+                "Welcome to MediLink",
+                f"""
         Hi {user.name},
 
         Welcome to MediLink!
@@ -50,7 +51,9 @@ def register():
 
         -MediLink Team
         """
-        )
+            )
+        except Exception as e:
+            print(e)
 
         flash("Registration successful. Please login.", "success")
 

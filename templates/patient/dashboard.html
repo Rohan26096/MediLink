@@ -132,10 +132,17 @@ Patient Dashboard
             Edit Profile
         </a>
 
-        <a href="#" class="action-btn disabled">
+        {% if profile_completion == 100 %}
+        <a href="{{ url_for('patient.book_appointment') }}" class="action-btn">
             <i class="fa-solid fa-calendar-plus"></i>
             Book Appointment
         </a>
+        {% else %}
+        <a href="{{ url_for('patient.profile') }}" class="action-btn disabled">
+            <i class="fa-solid fa-user-pen"></i>
+            Complete Profile First
+        </a>
+        {% endif %}
 
     </div>
 

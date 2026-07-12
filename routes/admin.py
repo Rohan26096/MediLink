@@ -70,18 +70,6 @@ def users():
         users=users,
         search=search
     )
-@admin.route("/admin/users")
-@login_required
-def users():
-
-    users = User.query.order_by(
-        User.created_at.desc()
-    ).all()
-
-    return render_template(
-        "admin/users.html",
-        users=users
-    )
 
 @admin.route("/admin/doctors")
 @login_required
