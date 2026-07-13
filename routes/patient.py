@@ -36,6 +36,7 @@ import uuid
 from models.user import User
 
 from werkzeug.utils import secure_filename
+from math import ceil
 
 patient = Blueprint("patient", __name__)
 
@@ -324,28 +325,47 @@ def appointments():
         )
 
     status = request.args.get("status")
+    search = request.args.get("search", "").strip()
 
-    query = Appointment.query.filter_by(
+    appointments = Appointment.query.filter_by(
         patient_id=patient.id
     )
 
     if status:
-
-        query = query.filter_by(
+        appointments = appointments.filter_by(
             status=status
         )
 
-    appointments = (
-        query.order_by(
-            Appointment.appointment_date.desc()
+    if search:
+        appointments = (
+            appointments
+            .join(Doctor)
+            .join(User)
+            .filter(
+                User.name.ilike(f"%{search}%")
+            )
         )
-        .all()
+    page = request.args.get("page", 1, type=int)
+
+    per_page = 10
+    appointments = (
+        appointments
+        .order_by(
+            Appointment.appointment_date.desc(),
+            Appointment.appointment_time.desc()
+        )
+        .paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
     )
 
     return render_template(
         "patient/appointments.html",
         appointments=appointments,
-        selected_status=status
+        selected_status=status,
+        search=search
     )
 
 @patient.route("/patient/appointments/cancel/<int:appointment_id>")

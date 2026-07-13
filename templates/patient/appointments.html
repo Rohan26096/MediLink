@@ -18,34 +18,47 @@ My Appointments
     <div class="section-header">
 
         <h2>My Appointments</h2>
-        <div class="action-buttons">
+        <form method="GET" class="action-buttons">
 
-            <a href="{{ url_for('patient.appointments') }}"
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Search Doctor..."
+                value="{{ request.args.get('search', '') }}"
+                style="width:220px;">
+
+            <button type="submit" class="action-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </button>
+
+            <a href="{{ url_for('patient.appointments', search=request.args.get('search','')) }}"
             class="action-btn">
                 All
             </a>
 
-            <a href="{{ url_for('patient.appointments', status='Pending') }}"
+            <a href="{{ url_for('patient.appointments', status='Pending', search=request.args.get('search','')) }}"
             class="action-btn">
                 Pending
             </a>
 
-            <a href="{{ url_for('patient.appointments', status='Accepted') }}"
+            <a href="{{ url_for('patient.appointments', status='Accepted', search=request.args.get('search','')) }}"
             class="action-btn">
                 Accepted
             </a>
 
-            <a href="{{ url_for('patient.appointments', status='Completed') }}"
+            <a href="{{ url_for('patient.appointments', status='Completed', search=request.args.get('search','')) }}"
             class="action-btn">
                 Completed
             </a>
 
-            <a href="{{ url_for('patient.appointments', status='Rejected') }}"
+            <a href="{{ url_for('patient.appointments', status='Rejected', search=request.args.get('search','')) }}"
             class="action-btn">
                 Rejected
             </a>
 
-        </div>
+        </form>
 
         <br>
 
@@ -76,7 +89,7 @@ My Appointments
 
         <tbody>
 
-        {% for appointment in appointments %}
+        {% for appointment in appointments.items %}
 
             <tr>
 
@@ -190,6 +203,48 @@ My Appointments
         </tbody>
 
     </table>
+
+    <div class="pagination">
+
+        {% if appointments.has_prev %}
+
+        <a href="{{ url_for(
+            'patient.appointments',
+            page=appointments.prev_num,
+            status=request.args.get('status'),
+            search=request.args.get('search')
+        ) }}"
+        class="action-btn">
+
+            <i class="fa-solid fa-angle-left"></i>
+            Previous
+
+        </a>
+
+        {% endif %}
+
+        <span class="page-number">
+            Page {{ appointments.page }} of {{ appointments.pages }}
+        </span>
+
+        {% if appointments.has_next %}
+
+        <a href="{{ url_for(
+            'patient.appointments',
+            page=appointments.next_num,
+            status=request.args.get('status'),
+            search=request.args.get('search')
+        ) }}"
+        class="action-btn">
+
+            Next
+            <i class="fa-solid fa-angle-right"></i>
+
+        </a>
+
+        {% endif %}
+
+    </div>
 
     {% else %}
 
