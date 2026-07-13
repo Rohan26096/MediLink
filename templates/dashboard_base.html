@@ -18,7 +18,7 @@
 
 </head>
 
-<body>
+<body class="{{ 'dark-mode' if session.get('theme', 'light') == 'dark' else '' }}">
 
     <div class="dashboard">
 
@@ -132,6 +132,7 @@
         });
 
     </script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 
 </body>
 

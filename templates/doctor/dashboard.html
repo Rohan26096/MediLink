@@ -10,10 +10,12 @@ Doctor Dashboard
 
 {% block dashboard_content %}
 
-<div class="dashboard-header">
-    <h2>Welcome Dr. {{ current_user.name }} 👨‍⚕️</h2>
-    <p>Manage your appointments and consultation records.</p>
-</div>
+{% with
+heading="Welcome Dr. " ~ current_user.name ~ " 👨‍⚕️",
+subtitle="Manage your appointments and consultation records."
+%}
+{% include "components/dashboard_header.html" %}
+{% endwith %}
 
 <div class="stats-grid">
 
@@ -29,17 +31,13 @@ Doctor Dashboard
         <p>Pending</p>
     </div>
 
-    <div class="stat-card">
-        <i class="fa-solid fa-circle-check"></i>
-        <h2>{{ accepted }}</h2>
-        <p>Accepted</p>
-    </div>
+    {% with icon="fa-solid fa-circle-check", value=accepted, title="Accepted" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
-    <div class="stat-card">
-        <i class="fa-solid fa-circle-xmark"></i>
-        <h2>{{ rejected }}</h2>
-        <p>Rejected</p>
-    </div>
+    {% with icon="fa-solid fa-circle-xmark", value=rejected, title="Rejected" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
 </div>
 
@@ -55,7 +53,7 @@ Doctor Dashboard
 
             <h2>{{ pending }}</h2>
 
-            <p>Pending Appointments</p>
+            <p>Pending Requests</p>
 
         </div>
 
@@ -65,7 +63,7 @@ Doctor Dashboard
 
             <h2>{{ completed }}</h2>
 
-            <p>Completed Appointments</p>
+            <p>Completed Consultations</p>
 
         </div>
 

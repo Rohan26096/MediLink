@@ -10,9 +10,12 @@ Doctor Appointments
 
 {% block dashboard_content %}
 
-<div class="dashboard-section">
+<div class="dashboard-header">
+    <h2>Appointment Requests</h2>
+    <p>Manage all appointment requests assigned to you.</p>
+</div>
 
-<h2>Appointment Requests</h2>
+<div class="dashboard-section">
 
 {% if appointments %}
 
@@ -25,7 +28,7 @@ Doctor Appointments
 <th>Date</th>
 <th>Time</th>
 <th>Status</th>
-<th>Actions</th>
+<th width="320">Actions</th>
 </tr>
 
 </thead>
@@ -54,26 +57,26 @@ patient_id=appointment.patient.id) }}">
 
 {% if appointment.status=="Pending" %}
 
-<span style="color:orange;">
-{{ appointment.status }}
+<span class="status pending">
+    {{ appointment.status }}
 </span>
 
 {% elif appointment.status=="Accepted" %}
 
-<span style="color:green;">
-{{ appointment.status }}
+<span class="status accepted">
+    {{ appointment.status }}
 </span>
 
 {% elif appointment.status=="Rejected" %}
 
-<span style="color:red;">
-{{ appointment.status }}
+<span class="status rejected">
+    {{ appointment.status }}
 </span>
 
 {% else %}
 
-<span style="color:blue;">
-{{ appointment.status }}
+<span class="status completed">
+    {{ appointment.status }}
 </span>
 
 {% endif %}
@@ -81,18 +84,18 @@ patient_id=appointment.patient.id) }}">
 </td>
 
 <td>
-
+<div class="action-buttons">
 {% if appointment.status=="Pending" %}
 
-<a href="{{ url_for('doctor.accept_appointment', id=appointment.id) }}"
+<a href="{{ url_for('doctor.accept_appointment', appointment_id=appointment.id) }}"
 class="action-btn">
 
 Accept
 
 </a>
 
-<a href="{{ url_for('doctor.reject_appointment', id=appointment.id) }}"
-class="action-btn">
+<a href="{{ url_for('doctor.reject_appointment', appointment_id=appointment.id) }}"
+class="delete-btn">
 
 Reject
 
@@ -101,20 +104,18 @@ Reject
 {% endif %}
 
 <a href="{{ url_for('doctor.consultation', id=appointment.id) }}"
-class="action-btn">
-
-Notes
-
+   class="action-btn">
+    <i class="fa-solid fa-notes-medical"></i>
+    Notes
 </a>
 
-<a
-href="{{ url_for('doctor.prescription', appointment_id=appointment.id) }}"
-class="action-btn">
-
-Prescription
-
+<a href="{{ url_for('doctor.prescription', appointment_id=appointment.id) }}"
+   class="action-btn">
+    <i class="fa-solid fa-prescription"></i>
+    Prescription
 </a>
 
+</div>
 </td>
 
 </tr>
@@ -127,7 +128,27 @@ Prescription
 
 {% else %}
 
-<p>No appointments found.</p>
+<div class="empty-state">
+
+    <i class="fa-solid fa-calendar-xmark"></i>
+
+    <h4>No Appointments</h4>
+
+    <p>No appointment requests available.</p>
+
+</div>
+{% endif %}
+{% if appointment.status == "Accepted" %}
+
+<a href="{{ url_for('doctor.complete_appointment',
+appointment_id=appointment.id) }}"
+class="action-btn">
+
+<i class="fa-solid fa-circle-check"></i>
+
+Complete
+
+</a>
 
 {% endif %}
 

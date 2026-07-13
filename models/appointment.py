@@ -46,15 +46,20 @@ class Appointment(db.Model):
         default="Pending"
     )
 
-    consultation_notes = db.Column(
-        db.Text
-    )
+    consultation_notes = db.Column(db.Text)
+    diagnosis = db.Column(db.Text)
+
+    symptoms = db.Column(db.Text)
+
+    follow_up_date = db.Column(db.Date)
+
+    vitals = db.Column(db.Text)
 
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
     )
-    
+
     prescription = db.relationship(
         "Prescription",
         backref="appointment",

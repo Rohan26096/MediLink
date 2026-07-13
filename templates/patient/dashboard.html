@@ -10,10 +10,12 @@ Patient Dashboard
 
 {% block dashboard_content %}
 
-<div class="dashboard-header">
-    <h2>Welcome Back, {{ current_user.name }} 👋</h2>
-    <p>Here's a quick overview of your healthcare account.</p>
-</div>
+{% with
+heading="Welcome Back, " ~ current_user.name ~ " 👋",
+subtitle="Here's a quick overview of your healthcare account."
+%}
+{% include "components/dashboard_header.html" %}
+{% endwith %}
 
 <!-- Statistics Cards -->
 
@@ -50,12 +52,17 @@ Patient Dashboard
 
 <ul class="activity-list">
 
-<li>📄 Uploaded Medical Record</li>
+{% with icon="fa-solid fa-file-medical", text="Uploaded Medical Record" %}
+    {% include "components/activity_item.html" %}
+{% endwith %}
 
-<li>📅 Booked Appointment</li>
+{% with icon="fa-solid fa-calendar-check", text="Booked Appointment" %}
+    {% include "components/activity_item.html" %}
+{% endwith %}
 
-<li>💊 Received Prescription</li>
-
+{% with icon="fa-solid fa-prescription", text="Received Prescription" %}
+    {% include "components/activity_item.html" %}
+{% endwith %}
 </ul>
 
 </div>
@@ -184,7 +191,15 @@ Patient Dashboard
 
     {% else %}
 
-    <p>No medical records uploaded yet.</p>
+    <div class="empty-state">
+        <i class="fa-solid fa-folder-open"></i>
+        <h4>No Medical Records</h4>
+        <p>You haven't uploaded any medical records yet.</p>
+
+        <a href="{{ url_for('medical_records.upload_record') }}" class="action-btn">
+            Upload Record
+        </a>
+    </div>
 
     {% endif %}
 

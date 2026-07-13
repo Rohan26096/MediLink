@@ -33,13 +33,24 @@ def dashboard():
         user_id=current_user.id
     ).first()
 
-    todays_appointments = Appointment.query.filter_by(
+    total_appointments = Appointment.query.filter_by(
         doctor_id=doctor.id
     ).count()
+
 
     pending = Appointment.query.filter_by(
         doctor_id=doctor.id,
         status="Pending"
+    ).count()
+
+    accepted = Appointment.query.filter_by(
+        doctor_id=doctor.id,
+        status="Accepted"
+    ).count()
+
+    rejected = Appointment.query.filter_by(
+        doctor_id=doctor.id,
+        status="Rejected"
     ).count()
 
     completed = Appointment.query.filter_by(
@@ -56,8 +67,10 @@ def dashboard():
 
     return render_template(
         "doctor/dashboard.html",
-        todays_appointments=todays_appointments,
+        total_appointments=total_appointments,
         pending=pending,
+        accepted=accepted,
+        rejected=rejected,
         completed=completed,
         total_patients=total_patients
     )
@@ -74,7 +87,8 @@ def appointments():
     appointments = Appointment.query.filter_by(
         doctor_id=doctor.id
     ).order_by(
-        Appointment.appointment_date.desc()
+    Appointment.appointment_date.desc(),
+    Appointment.appointment_time.desc()
     ).all()
 
     return render_template(
@@ -87,6 +101,9 @@ def appointments():
 def accept_appointment(appointment_id):
 
     appointment = Appointment.query.get_or_404(appointment_id)
+    if appointment.doctor_id != current_user.doctor.id:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("doctor.appointments"))
 
     appointment.status = "Accepted"
 
@@ -127,6 +144,9 @@ def accept_appointment(appointment_id):
 def reject_appointment(appointment_id):
 
     appointment = Appointment.query.get_or_404(appointment_id)
+    if appointment.doctor_id != current_user.doctor.id:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("doctor.appointments"))
 
     appointment.status = "Rejected"
 
@@ -162,10 +182,33 @@ def reject_appointment(appointment_id):
 def complete_appointment(appointment_id):
 
     appointment = Appointment.query.get_or_404(appointment_id)
+    if appointment.doctor_id != current_user.doctor.id:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("doctor.appointments"))
 
     appointment.status = "Completed"
 
     db.session.commit()
+    try:
+        send_email(
+            appointment.patient.user.email,
+            "Appointment Completed",
+            f"""
+    Hi {appointment.patient.user.name},
+
+    Your consultation with
+    Dr. {appointment.doctor.user.name}
+    has been completed.
+
+    You can now log in to MediLink to
+    view your consultation details and
+    prescription.
+
+    -MediLink Team
+    """
+        )
+    except Exception as e:
+        print(e)
 
     flash("Appointment completed.", "success")
 
@@ -179,10 +222,28 @@ def complete_appointment(appointment_id):
 def consultation(id):
 
     appointment = Appointment.query.get_or_404(id)
+    if appointment.doctor_id != current_user.doctor.id:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("doctor.appointments"))
 
     if request.method == "POST":
 
-        appointment.consultation_notes = request.form.get("notes")
+        appointment.symptoms = request.form.get("symptoms", "").strip()
+
+        appointment.vitals = request.form.get("vitals", "").strip()
+
+        appointment.diagnosis = request.form.get("diagnosis", "").strip()
+
+        appointment.consultation_notes = request.form.get("notes", "").strip()
+
+        follow_up = request.form.get("follow_up_date")
+
+        if follow_up:
+            from datetime import datetime
+            appointment.follow_up_date = datetime.strptime(
+                follow_up,
+                "%Y-%m-%d"
+            ).date()
 
         appointment.status = "Completed"
 
@@ -252,6 +313,9 @@ def prescription(appointment_id):
     appointment = Appointment.query.get_or_404(
         appointment_id
     )
+    if appointment.doctor_id != current_user.doctor.id:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("doctor.appointments"))
 
     form = PrescriptionForm()
 
@@ -305,7 +369,7 @@ def prescription(appointment_id):
             url_for("doctor.appointments")
         )
 
-    elif prescription.id:
+    elif prescription:
 
         form.medicines.data = prescription.medicines
         form.dosage.data = prescription.dosage
@@ -320,8 +384,18 @@ def prescription(appointment_id):
 @doctor.route("/doctor/patient/<int:patient_id>")
 @login_required
 def patient_history(patient_id):
-
     patient = Patient.query.get_or_404(patient_id)
+
+    doctor = current_user.doctor
+
+    appointment = Appointment.query.filter_by(
+        doctor_id=doctor.id,
+        patient_id=patient.id
+    ).first()
+
+    if not appointment:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("doctor.appointments"))
 
     records = (
         MedicalRecord.query
@@ -332,15 +406,24 @@ def patient_history(patient_id):
 
     appointments = (
         Appointment.query
-        .filter_by(patient_id=patient.id)
-        .order_by(Appointment.appointment_date.desc())
+        .filter_by(
+            patient_id=patient.id,
+            doctor_id=doctor.id
+        )
+        .order_by(
+            Appointment.appointment_date.desc(),
+            Appointment.appointment_time.desc()
+        )
         .all()
     )
 
     prescriptions = (
         Prescription.query
         .join(Appointment)
-        .filter(Appointment.patient_id == patient.id)
+        .filter(
+            Appointment.patient_id == patient.id,
+            Appointment.doctor_id == doctor.id
+        )
         .all()
     )
 
@@ -351,4 +434,3 @@ def patient_history(patient_id):
         appointments=appointments,
         prescriptions=prescriptions
     )
-

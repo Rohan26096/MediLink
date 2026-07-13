@@ -297,15 +297,19 @@ def appointments():
 
     hospital = Hospital.query.first()
 
-    appointments = (
-        Appointment.query.filter_by(
-            hospital_id=hospital.id
-        )
-        .order_by(
-            Appointment.appointment_date.desc()
-        )
-        .all()
+    status = request.args.get("status")
+
+    appointments = Appointment.query.filter_by(
+        hospital_id=hospital.id
     )
+
+    if status:
+        appointments = appointments.filter_by(status=status)
+
+    appointments = appointments.order_by(
+        Appointment.appointment_date.desc(),
+        Appointment.appointment_time.desc()
+    ).all()
 
     return render_template(
         "hospital/appointments.html",

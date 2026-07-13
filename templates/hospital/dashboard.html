@@ -10,13 +10,12 @@ Hospital Dashboard
 
 {% block dashboard_content %}
 
-<div class="dashboard-header">
-
-    <h2>Hospital Dashboard 🏥</h2>
-
-    <p>Monitor doctors, patients and appointments.</p>
-
-</div>
+{% with
+heading="Hospital Dashboard 🏥",
+subtitle="Monitor doctors, patients and appointments."
+%}
+{% include "components/dashboard_header.html" %}
+{% endwith %}
 
 <div class="stats-grid">
 
@@ -57,11 +56,17 @@ Hospital Dashboard
 
 <ul class="activity-list">
 
-<li>Doctor Added</li>
+{% with icon="fa-solid fa-user-doctor", text="Doctor Added" %}
+    {% include "components/activity_item.html" %}
+{% endwith %}
 
-<li>Appointment Booked</li>
+{% with icon="fa-solid fa-calendar-check", text="Appointment Booked" %}
+    {% include "components/activity_item.html" %}
+{% endwith %}
 
-<li>Prescription Issued</li>
+{% with icon="fa-solid fa-prescription", text="Prescription Issued" %}
+    {% include "components/activity_item.html" %}
+{% endwith %}
 
 </ul>
 
@@ -116,7 +121,11 @@ Hospital Dashboard
 
     {% else %}
 
-        <p>No appointments yet.</p>
+        <div class="empty-state">
+            <i class="fa-solid fa-calendar-xmark"></i>
+            <h4>No Appointments</h4>
+            <p>No appointments have been booked yet.</p>
+        </div>
 
     {% endif %}
 

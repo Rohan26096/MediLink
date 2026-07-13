@@ -10,9 +10,50 @@ Hospital Appointments
 
 {% block dashboard_content %}
 
+<div class="dashboard-header">
+    <h2>Hospital Appointments</h2>
+    <p>Monitor and manage appointments across all doctors.</p>
+</div>
+
 <div class="dashboard-section">
 
-    <h2>Appointments</h2>
+    <div class="section-header">
+
+        <form method="GET" class="action-buttons">
+
+            <select name="status" class="form-control" style="width:180px;">
+
+                <option value="">All Status</option>
+                <option value="Pending"
+                    {% if request.args.get('status') == 'Pending' %}selected{% endif %}>
+                    Pending
+                </option>
+
+                <option value="Accepted"
+                    {% if request.args.get('status') == 'Accepted' %}selected{% endif %}>
+                    Accepted
+                </option>
+
+                <option value="Completed"
+                    {% if request.args.get('status') == 'Completed' %}selected{% endif %}>
+                    Completed
+                </option>
+
+                <option value="Rejected"
+                    {% if request.args.get('status') == 'Rejected' %}selected{% endif %}>
+                    Rejected
+                </option>
+
+            </select>
+
+            <button type="submit" class="action-btn">
+                <i class="fa-solid fa-filter"></i>
+                Filter
+            </button>
+
+        </form>
+
+    </div>
 
     {% if appointments %}
 
@@ -21,15 +62,13 @@ Hospital Appointments
         <thead>
 
             <tr>
-
                 <th>Patient</th>
                 <th>Doctor</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Status</th>
                 <th>Reason</th>
-                <th>Prescription</th>
-
+                <th width="120">Prescription</th>
             </tr>
 
         </thead>
@@ -45,7 +84,7 @@ Hospital Appointments
                 </td>
 
                 <td>
-                    {{ appointment.doctor.user.name }}
+                    Dr. {{ appointment.doctor.user.name }}
                 </td>
 
                 <td>
@@ -60,25 +99,25 @@ Hospital Appointments
 
                     {% if appointment.status == "Pending" %}
 
-                        <span style="color:orange;">
+                        <span class="status pending">
                             {{ appointment.status }}
                         </span>
 
                     {% elif appointment.status == "Accepted" %}
 
-                        <span style="color:green;">
+                        <span class="status accepted">
                             {{ appointment.status }}
                         </span>
 
                     {% elif appointment.status == "Rejected" %}
 
-                        <span style="color:red;">
+                        <span class="status rejected">
                             {{ appointment.status }}
                         </span>
 
                     {% else %}
 
-                        <span style="color:#2563eb;">
+                        <span class="status completed">
                             {{ appointment.status }}
                         </span>
 
@@ -87,22 +126,22 @@ Hospital Appointments
                 </td>
 
                 <td>
-
                     {{ appointment.reason }}
-
                 </td>
 
                 <td>
 
                     {% if appointment.prescription %}
 
-                        <i class="fa-solid fa-circle-check"
-                           style="color:green;"></i>
+                        <span class="status accepted">
+                            Available
+                        </span>
 
                     {% else %}
 
-                        <i class="fa-solid fa-circle-xmark"
-                           style="color:red;"></i>
+                        <span class="status rejected">
+                            Pending
+                        </span>
 
                     {% endif %}
 
@@ -118,7 +157,15 @@ Hospital Appointments
 
     {% else %}
 
-        <p>No appointments found.</p>
+    <div class="empty-state">
+
+        <i class="fa-solid fa-calendar-xmark"></i>
+
+        <h4>No Appointments</h4>
+
+        <p>No appointments match the selected filter.</p>
+
+    </div>
 
     {% endif %}
 

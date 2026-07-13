@@ -10,67 +10,36 @@ Admin Dashboard
 
 {% block dashboard_content %}
 
-<div class="dashboard-header">
-
-    <h2>Welcome Admin 👑</h2>
-
-    <p>Manage the entire MediLink platform.</p>
-
-</div>
+{% with
+heading="Welcome Admin 👑",
+subtitle="Manage the entire MediLink platform."
+%}
+{% include "components/dashboard_header.html" %}
+{% endwith %}
 
 <!-- Statistics -->
 
 <div class="stats-grid">
 
-    <div class="stat-card">
+    {% with icon="fa-solid fa-users", value=total_users, title="Total Users" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
-        <i class="fa-solid fa-users"></i>
+    {% with icon="fa-solid fa-user", value=total_patients, title="Patients" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
-        <h2>{{ total_users }}</h2>
+    {% with icon="fa-solid fa-user-doctor", value=total_doctors, title="Doctors" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
-        <p>Total Users</p>
+    {% with icon="fa-solid fa-hospital", value=total_hospitals, title="Hospitals" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
-    </div>
-
-    <div class="stat-card">
-
-        <i class="fa-solid fa-user"></i>
-
-        <h2>{{ total_patients }}</h2>
-
-        <p>Patients</p>
-
-    </div>
-
-    <div class="stat-card">
-
-        <i class="fa-solid fa-user-doctor"></i>
-
-        <h2>{{ total_doctors }}</h2>
-
-        <p>Doctors</p>
-
-    </div>
-
-    <div class="stat-card">
-
-        <i class="fa-solid fa-hospital"></i>
-
-        <h2>{{ total_hospitals }}</h2>
-
-        <p>Hospitals</p>
-
-    </div>
-
-    <div class="stat-card">
-
-        <i class="fa-solid fa-calendar-check"></i>
-
-        <h2>{{ total_appointments }}</h2>
-
-        <p>Appointments</p>
-
-    </div>
+    {% with icon="fa-solid fa-calendar-check", value=total_appointments, title="Appointments" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
 </div>
 
@@ -178,25 +147,21 @@ Admin Dashboard
 
     <ul class="activity-list">
 
-        <li>
-            <i class="fa-solid fa-user-plus"></i>
-            New User Registered
-        </li>
+        {% with icon="fa-solid fa-user-plus", text="New User Registered" %}
+            {% include "components/activity_item.html" %}
+        {% endwith %}
 
-        <li>
-            <i class="fa-solid fa-hospital"></i>
-            Hospital Added
-        </li>
+        {% with icon="fa-solid fa-hospital", text="Hospital Added" %}
+            {% include "components/activity_item.html" %}
+        {% endwith %}
 
-        <li>
-            <i class="fa-solid fa-user-doctor"></i>
-            Doctor Joined
-        </li>
+        {% with icon="fa-solid fa-user-doctor", text="Doctor Joined" %}
+            {% include "components/activity_item.html" %}
+        {% endwith %}
 
-        <li>
-            <i class="fa-solid fa-calendar-check"></i>
-            Appointment Booked
-        </li>
+        {% with icon="fa-solid fa-calendar-check", text="Appointment Booked" %}
+            {% include "components/activity_item.html" %}
+        {% endwith %}
 
     </ul>
 

@@ -10,8 +10,11 @@ My Appointments
 
 {% block dashboard_content %}
 
-<div class="dashboard-section">
+<div class="dashboard-header">
+    <p>Track and manage all your appointments.</p>
+</div>
 
+<div class="dashboard-section">
     <div class="section-header">
 
         <h2>My Appointments</h2>
@@ -66,7 +69,7 @@ My Appointments
                 <th>Time</th>
                 <th>Status</th>
                 <th>Actions</th>
-                <th>Doctor Notes</th>
+                <th width="320">Consultation</th>
             </tr>
 
         </thead>
@@ -89,25 +92,25 @@ My Appointments
 
                     {% if appointment.status == "Pending" %}
 
-                        <span style="color: orange;">
+                        <span class="status pending">
                             {{ appointment.status }}
                         </span>
 
                     {% elif appointment.status == "Accepted" %}
 
-                        <span style="color: green;">
+                        <span class="status accepted">
                             {{ appointment.status }}
                         </span>
 
                     {% elif appointment.status == "Rejected" %}
 
-                        <span style="color: red;">
+                        <span class="status rejected">
                             {{ appointment.status }}
                         </span>
 
                     {% elif appointment.status == "Completed" %}
 
-                        <span style="color: blue;">
+                        <span class="status completed">
                             {{ appointment.status }}
                         </span>
 
@@ -119,7 +122,7 @@ My Appointments
 
                 </td>
 
-                <td>
+                <td class="action-buttons">
 
                     {% if appointment.status == "Pending" %}
 
@@ -140,19 +143,43 @@ My Appointments
 
                 </td>
 
-                <td>
+                <td style="min-width:320px;">
+
+                {% if appointment.status == "Completed" %}
+
+                    {% if appointment.diagnosis %}
+                        <strong>Diagnosis:</strong><br>
+                        {{ appointment.diagnosis }}<br><br>
+                    {% endif %}
 
                     {% if appointment.consultation_notes %}
-
-                        {{ appointment.consultation_notes }}
-
-                    {% else %}
-
-                        <span style="color: gray;">
-                            No notes yet
-                        </span>
-
+                        <strong>Notes:</strong><br>
+                        {{ appointment.consultation_notes }}<br><br>
                     {% endif %}
+
+                    {% if appointment.follow_up_date %}
+                        <strong>Follow-up:</strong><br>
+                        {{ appointment.follow_up_date.strftime("%d %b %Y") }}
+                        <br><br>
+                    {% endif %}
+
+                    <a href="{{ url_for('patient.prescriptions') }}"
+                    class="action-btn">
+
+                        <i class="fa-solid fa-prescription"></i>
+
+                        View Prescription
+
+                    </a>
+
+                {% else %}
+
+                <span class="text-muted">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                    Consultation will appear after your appointment is completed.
+                </span>
+
+                {% endif %}
 
                 </td>
 
@@ -166,7 +193,24 @@ My Appointments
 
     {% else %}
 
-        <p>No appointments booked yet.</p>
+        <div class="empty-state">
+
+            <i class="fa-solid fa-calendar-xmark"></i>
+
+            <h4>No Appointments</h4>
+
+            <p>You haven't booked any appointments yet.</p>
+
+            <a href="{{ url_for('patient.book_appointment') }}"
+            class="action-btn">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Book Appointment
+
+            </a>
+
+        </div>
 
     {% endif %}
 

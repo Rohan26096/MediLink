@@ -9,10 +9,12 @@ My Prescriptions
 {% endblock %}
 
 {% block dashboard_content %}
+<div class="dashboard-header">
+    <h2>My Prescriptions</h2>
+    <p>View all prescriptions uploaded by your doctors.</p>
+</div>
 
 <div class="dashboard-section">
-
-    <h2>My Prescriptions</h2>
 
     {% if prescriptions %}
 
@@ -26,7 +28,7 @@ My Prescriptions
                 <th>Medicines</th>
                 <th>Dosage</th>
                 <th>Instructions</th>
-                <th>Download</th>
+                <th width="130">Download</th>
             </tr>
 
         </thead>
@@ -38,22 +40,25 @@ My Prescriptions
             <tr>
 
                 <td>
-                    {{ prescription.created_at.strftime("%d %b %Y") }}
+                    {{ prescription.appointment.appointment_date.strftime("%d %b %Y") }}
                 </td>
 
                 <td>
-                    {{ prescription.appointment.doctor.user.name }}
+                    Dr. {{ prescription.appointment.doctor.user.name }}
                 </td>
 
                 <td>
+                    <strong>Medicines</strong><br>
                     {{ prescription.medicines }}
                 </td>
 
                 <td>
+                    <strong>Dosage</strong><br>
                     {{ prescription.dosage }}
                 </td>
 
                 <td>
+                    <strong>Instructions</strong><br>
                     {{ prescription.instructions }}
                 </td>
 
@@ -62,6 +67,7 @@ My Prescriptions
                     <a
                         href="{{ url_for('patient.download_prescription', id=prescription.id) }}"
                         class="action-btn"
+                        target="_blank"
                     >
                         <i class="fa-solid fa-download"></i>
                         PDF
@@ -79,7 +85,15 @@ My Prescriptions
 
     {% else %}
 
-        <p>No prescriptions available.</p>
+        <div class="empty-state">
+
+            <i class="fa-solid fa-prescription-bottle-medical"></i>
+
+            <h4>No Prescriptions</h4>
+
+            <p>Your prescriptions will appear here after your doctor uploads them.</p>
+
+        </div>
 
     {% endif %}
 
