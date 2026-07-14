@@ -21,7 +21,9 @@ from models.prescription import Prescription
 from models.patient import Patient
 from models.medical_record import MedicalRecord
 from utils.email import send_email
-
+from forms.doctor_schedule_form import DoctorScheduleForm
+from models.doctor_schedule import DoctorSchedule
+from datetime import datetime
 doctor = Blueprint("doctor", __name__)
 
 
@@ -433,4 +435,165 @@ def patient_history(patient_id):
         records=records,
         appointments=appointments,
         prescriptions=prescriptions
+    )
+
+@doctor.route(
+    "/doctor/schedule",
+    methods=["GET", "POST"]
+)
+@login_required
+def schedule():
+
+    doctor_profile = Doctor.query.filter_by(
+        user_id=current_user.id
+    ).first_or_404()
+
+    form = DoctorScheduleForm()
+
+    if form.validate_on_submit():
+
+        if form.start_time.data >= form.end_time.data:
+
+            flash(
+                "End time must be after start time.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("doctor.schedule")
+            )
+
+        existing = DoctorSchedule.query.filter_by(
+            doctor_id=doctor_profile.id,
+            day=form.day.data
+        ).first()
+
+        if existing:
+
+            flash(
+                "Schedule for this day already exists.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("doctor.schedule")
+            )
+
+        schedule = DoctorSchedule(
+            doctor_id=doctor_profile.id,
+            day=form.day.data,
+            start_time=form.start_time.data,
+            end_time=form.end_time.data,
+            is_available=form.is_available.data
+        )
+
+        db.session.add(schedule)
+        db.session.commit()
+
+        flash(
+            "Schedule added successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for("doctor.schedule")
+        )
+    
+    schedules = DoctorSchedule.query.filter_by(
+        doctor_id=doctor_profile.id
+    ).order_by(
+        DoctorSchedule.day
+    ).all()
+
+    return render_template(
+        "doctor/schedule.html",
+        form=form,
+        schedules=schedules
+    )
+
+@doctor.route(
+    "/doctor/schedule/delete/<int:id>"
+)
+@login_required
+def delete_schedule(id):
+
+    schedule = DoctorSchedule.query.get_or_404(id)
+
+    if schedule.doctor.user_id != current_user.id:
+
+        flash(
+            "Unauthorized access.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("doctor.schedule")
+        )
+
+    db.session.delete(schedule)
+
+    db.session.commit()
+
+    flash(
+        "Schedule deleted successfully.",
+        "success"
+    )
+
+    return redirect(
+        url_for("doctor.schedule"))
+
+@doctor.route(
+    "/doctor/schedule/edit/<int:id>",
+    methods=["GET", "POST"]
+)
+@login_required
+def edit_schedule(id):
+
+    schedule = DoctorSchedule.query.get_or_404(id)
+
+    if schedule.doctor.user_id != current_user.id:
+
+        flash(
+            "Unauthorized access.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("doctor.schedule")
+        )
+
+    form = DoctorScheduleForm(obj=schedule)
+
+    if form.validate_on_submit():
+
+        if form.start_time.data >= form.end_time.data:
+
+            flash(
+                "End time must be after start time.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("doctor.edit_schedule", id=id)
+            )
+
+        schedule.day = form.day.data
+        schedule.start_time = form.start_time.data
+        schedule.end_time = form.end_time.data
+        schedule.is_available = form.is_available.data
+
+        db.session.commit()
+
+        flash(
+            "Schedule updated successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for("doctor.schedule")
+        )
+
+    return render_template(
+        "doctor/edit_schedule.html",
+        form=form
     )

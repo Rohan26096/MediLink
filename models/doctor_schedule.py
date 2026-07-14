@@ -18,10 +18,17 @@ class Doctor(db.Model):
         db.ForeignKey("hospitals.id"),
         nullable=False
     )
+
     appointments = db.relationship(
         "Appointment",
         backref="doctor",
         lazy=True
+    )
+
+    schedules = db.relationship(
+        "DoctorSchedule",
+        back_populates="doctor",
+        cascade="all, delete-orphan"
     )
 
     specialization = db.Column(
@@ -50,9 +57,3 @@ class Doctor(db.Model):
     )
 
     bio = db.Column(db.Text)
-    
-    schedules = db.relationship(
-        "DoctorSchedule",
-        back_populates="doctor",
-        cascade="all, delete-orphan"
-    )

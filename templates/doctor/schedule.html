@@ -1,7 +1,7 @@
 {% extends "doctor/doctor_base.html" %}
 
 {% block title %}
-Schedule
+Doctor Schedule
 {% endblock %}
 
 {% block page_title %}
@@ -10,11 +10,51 @@ My Schedule
 
 {% block dashboard_content %}
 
+<div class="dashboard-header">
+    <h2>Manage Schedule</h2>
+    <p>Set your weekly availability for appointments.</p>
+</div>
+
 <div class="dashboard-section">
 
-    <h2>Appointment Schedule</h2>
+    <form method="POST">
 
-    {% if appointments %}
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.day.label }}
+            {{ form.day(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.start_time.label }}
+            {{ form.start_time(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.end_time.label }}
+            {{ form.end_time(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+
+            {{ form.is_available() }}
+
+            {{ form.is_available.label }}
+
+        </div>
+
+        {{ form.submit(class="action-btn") }}
+
+    </form>
+
+</div>
+
+<div class="dashboard-section">
+
+    <h2>Weekly Schedule</h2>
+
+    {% if schedules %}
 
     <table class="recent-table">
 
@@ -22,11 +62,11 @@ My Schedule
 
             <tr>
 
-                <th>Date</th>
-                <th>Time</th>
-                <th>Patient</th>
-                <th>Hospital</th>
+                <th>Day</th>
+                <th>Start Time</th>
+                <th>End Time</th>
                 <th>Status</th>
+                <th>Actions</th>
 
             </tr>
 
@@ -34,19 +74,62 @@ My Schedule
 
         <tbody>
 
-        {% for appointment in appointments %}
+        {% for schedule in schedules %}
 
             <tr>
 
-                <td>{{ appointment.appointment_date.strftime("%d %b %Y") }}</td>
+                <td>{{ schedule.day }}</td>
 
-                <td>{{ appointment.appointment_time.strftime("%I:%M %p") }}</td>
+                <td>
+                    {{ schedule.start_time.strftime("%I:%M %p") }}
+                </td>
 
-                <td>{{ appointment.patient.user.name }}</td>
+                <td>
+                    {{ schedule.end_time.strftime("%I:%M %p") }}
+                </td>
 
-                <td>{{ appointment.hospital.name }}</td>
+                <td>
 
-                <td>{{ appointment.status }}</td>
+                    {% if schedule.is_available %}
+
+                    <span class="status accepted">
+
+                        Available
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="status rejected">
+
+                        Off
+
+                    </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <a
+                    href="{{ url_for('doctor.edit_schedule', id=schedule.id) }}"
+                    class="action-btn">
+
+                        Edit
+
+                    </a>
+
+                    <a
+                    href="{{ url_for('doctor.delete_schedule', id=schedule.id) }}"
+                    class="delete-btn"
+                    onclick="return confirm('Delete this schedule?')">
+
+                        Delete
+
+                    </a>
+
+                </td>
 
             </tr>
 
@@ -58,7 +141,17 @@ My Schedule
 
     {% else %}
 
-        <p>No appointments scheduled.</p>
+    <div class="empty-state">
+
+        <i class="fa-solid fa-calendar-week"></i>
+
+        <h4>No Schedule Added</h4>
+
+        <p>
+            Add your weekly availability so patients can book appointments.
+        </p>
+
+    </div>
 
     {% endif %}
 

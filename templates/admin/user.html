@@ -10,46 +10,133 @@ All Users
 
 {% block dashboard_content %}
 
+<div class="dashboard-header">
+    <h2>Registered Users</h2>
+    <p>Manage all users registered on the MediLink platform.</p>
+</div>
+
 <div class="dashboard-section">
 
-<h2>Registered Users</h2>
+    <form method="GET" class="action-buttons" style="margin-bottom:20px;">
 
-<table class="recent-table">
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search by name or email..."
+            value="{{ request.args.get('search','') }}"
+            style="width:260px;">
 
-<thead>
+        <button type="submit" class="action-btn">
 
-<tr>
+            <i class="fa-solid fa-magnifying-glass"></i>
 
-<th>Name</th>
-<th>Email</th>
-<th>Role</th>
-<th>Joined</th>
+            Search
 
-</tr>
+        </button>
 
-</thead>
+    </form>
 
-<tbody>
+    {% if users %}
 
-{% for user in users %}
+    <table class="recent-table">
 
-<tr>
+        <thead>
 
-<td>{{ user.name }}</td>
+            <tr>
 
-<td>{{ user.email }}</td>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
 
-<td>{{ user.role.title() }}</td>
+            </tr>
 
-<td>{{ user.created_at.strftime("%d %b %Y") }}</td>
+        </thead>
 
-</tr>
+        <tbody>
 
-{% endfor %}
+        {% for user in users.items %}
 
-</tbody>
+            <tr>
 
-</table>
+                <td>{{ user.name }}</td>
+
+                <td>{{ user.email }}</td>
+
+                <td>
+                    <span class="status completed">
+                        {{ user.role.title() }}
+                    </span>
+                </td>
+
+                <td>{{ user.created_at.strftime("%d %b %Y") }}</td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="pagination">
+
+        {% if users.has_prev %}
+
+        <a href="{{ url_for(
+            'admin.users',
+            page=users.prev_num,
+            search=request.args.get('search')
+        ) }}"
+        class="action-btn">
+
+            <i class="fa-solid fa-angle-left"></i>
+
+            Previous
+
+        </a>
+
+        {% endif %}
+
+        <span class="page-number">
+
+            Page {{ users.page }} of {{ users.pages }}
+
+        </span>
+
+        {% if users.has_next %}
+
+        <a href="{{ url_for(
+            'admin.users',
+            page=users.next_num,
+            search=request.args.get('search')
+        ) }}"
+        class="action-btn">
+
+            Next
+
+            <i class="fa-solid fa-angle-right"></i>
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <i class="fa-solid fa-users-slash"></i>
+
+        <h4>No Users Found</h4>
+
+        <p>No users match your search.</p>
+
+    </div>
+
+    {% endif %}
 
 </div>
 

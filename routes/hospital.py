@@ -299,8 +299,33 @@ def appointments():
 
     status = request.args.get("status")
 
+    status = request.args.get("status")
+    search = request.args.get("search", "").strip()
+
     appointments = Appointment.query.filter_by(
         hospital_id=hospital.id
+    )
+
+    if status:
+        appointments = appointments.filter_by(status=status)
+
+    if search:
+        appointments = (
+            appointments
+            .join(Doctor)
+            .join(User)
+            .filter(User.name.ilike(f"%{search}%"))
+        )
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    appointments = appointments.order_by(
+        Appointment.appointment_date.desc(),
+        Appointment.appointment_time.desc()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
     )
 
     if status:

@@ -49,14 +49,29 @@ Book Appointment
 
         <div class="form-group">
             {{ form.appointment_date.label }}
-            {{ form.appointment_date(class="form-control") }}
+            {{ form.appointment_date(
+                class="form-control",
+                id="appointment_date"
+            ) }}
         </div>
 
         <br>
 
         <div class="form-group">
-            {{ form.appointment_time.label }}
-            {{ form.appointment_time(class="form-control") }}
+
+            <label>Available Time</label>
+
+            <select
+                id="appointment_time"
+                name="appointment_time"
+                class="form-control">
+
+                <option value="">
+                    Select Time
+                </option>
+
+            </select>
+
         </div>
 
         <br>
@@ -117,6 +132,48 @@ hospital.addEventListener("change", function(){
     });
 
 });
+const dateInput = document.getElementById("appointment_date");
+const doctorSelect = document.getElementById("doctor");
+const timeSelect = document.getElementById("appointment_time");
+
+async function loadSlots() {
+
+    if (!doctorSelect.value || !dateInput.value)
+        return;
+
+    const day = new Date(dateInput.value)
+        .toLocaleDateString("en-US", {
+            weekday: "long"
+        });
+
+    const response = await fetch(
+        `/get_slots/${doctorSelect.value}?day=${day}&date=${dateInput.value}`
+    );
+
+    const data = await response.json();
+
+    timeSelect.innerHTML =
+        '<option value="">Select Time</option>';
+
+    data.slots.forEach(slot => {
+
+        timeSelect.innerHTML +=
+            `<option value="${slot}">
+                ${slot}
+            </option>`;
+    });
+
+}
+
+doctorSelect.addEventListener(
+    "change",
+    loadSlots
+);
+
+dateInput.addEventListener(
+    "change",
+    loadSlots
+);
 
 </script>
 {% endblock %}

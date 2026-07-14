@@ -43,27 +43,25 @@ def dashboard():
 @login_required
 def users():
 
-    search = request.args.get("search", "")
+    search = request.args.get("search", "").strip()
 
     users = User.query
 
     if search:
-
         users = users.filter(
-
-            or_(
-
-                User.name.ilike(f"%{search}%"),
-
-                User.email.ilike(f"%{search}%"),
-
-                User.role.ilike(f"%{search}%")
-
-            )
-
+            User.name.ilike(f"%{search}%") |
+            User.email.ilike(f"%{search}%")
         )
 
-    users = users.order_by(User.created_at.desc()).all()
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+    users = users.order_by(
+        User.id.desc()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
 
     return render_template(
         "admin/users.html",

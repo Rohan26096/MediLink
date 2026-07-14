@@ -21,9 +21,18 @@ Hospital Appointments
 
         <form method="GET" class="action-buttons">
 
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Search Doctor..."
+                value="{{ request.args.get('search','') }}"
+                style="width:220px;">
+
             <select name="status" class="form-control" style="width:180px;">
 
                 <option value="">All Status</option>
+
                 <option value="Pending"
                     {% if request.args.get('status') == 'Pending' %}selected{% endif %}>
                     Pending
@@ -47,8 +56,8 @@ Hospital Appointments
             </select>
 
             <button type="submit" class="action-btn">
-                <i class="fa-solid fa-filter"></i>
-                Filter
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search & Filter
             </button>
 
         </form>
@@ -75,7 +84,7 @@ Hospital Appointments
 
         <tbody>
 
-        {% for appointment in appointments %}
+        {% for appointment in appointments.items %}
 
             <tr>
 
@@ -154,6 +163,49 @@ Hospital Appointments
         </tbody>
 
     </table>
+    <div class="pagination">
+
+        {% if appointments.has_prev %}
+
+        <a href="{{ url_for(
+            'hospital.appointments',
+            page=appointments.prev_num,
+            status=request.args.get('status'),
+            search=request.args.get('search')
+        ) }}"
+        class="action-btn">
+
+            <i class="fa-solid fa-angle-left"></i>
+            Previous
+
+        </a>
+
+        {% endif %}
+
+        <span class="page-number">
+
+            Page {{ appointments.page }} of {{ appointments.pages }}
+
+        </span>
+
+        {% if appointments.has_next %}
+
+        <a href="{{ url_for(
+            'hospital.appointments',
+            page=appointments.next_num,
+            status=request.args.get('status'),
+            search=request.args.get('search')
+        ) }}"
+        class="action-btn">
+
+            Next
+            <i class="fa-solid fa-angle-right"></i>
+
+        </a>
+
+        {% endif %}
+
+    </div>
 
     {% else %}
 

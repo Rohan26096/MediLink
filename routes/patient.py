@@ -37,6 +37,8 @@ from models.user import User
 
 from werkzeug.utils import secure_filename
 from math import ceil
+from datetime import datetime, timedelta
+from models.doctor_schedule import DoctorSchedule
 
 patient = Blueprint("patient", __name__)
 
@@ -486,3 +488,59 @@ def download_prescription(id):
         download_name="Prescription.pdf",
         mimetype="application/pdf"
     )
+
+@patient.route("/get_slots/<int:doctor_id>")
+@login_required
+def get_slots(doctor_id):
+
+    day = request.args.get("day")
+
+    schedule = DoctorSchedule.query.filter_by(
+        doctor_id=doctor_id,
+        day=day,
+        is_available=True
+    ).first()
+
+    if not schedule:
+        return {"slots": []}
+
+    slots = []
+
+    current = datetime.combine(
+        datetime.today(),
+        schedule.start_time
+    )
+
+    end = datetime.combine(
+        datetime.today(),
+        schedule.end_time
+    )
+
+    appointment_date = datetime.strptime(
+        request.args.get("date"),
+        "%Y-%m-%d"
+    ).date()
+
+    booked_slots = Appointment.query.filter_by(
+        doctor_id=doctor_id,
+        appointment_date=appointment_date
+    ).all()
+
+    booked_times = {
+        a.appointment_time.strftime("%H:%M")
+        for a in booked_slots
+        if a.status != "Rejected"
+    }
+
+    while current < end:
+
+        slot = current.strftime("%H:%M")
+
+        if slot not in booked_times:
+            slots.append(slot)
+
+        current += timedelta(minutes=30)
+
+    return {
+        "slots": slots
+    }
