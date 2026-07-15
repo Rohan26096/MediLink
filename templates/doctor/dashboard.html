@@ -78,6 +78,13 @@ subtitle="Manage your appointments and consultation records."
         </div>
 
     </div>
+    
+</div>
+<div class="dashboard-section">
+
+    <h3>Consultation Overview</h3>
+
+    <canvas id="doctorChart"></canvas>
 
 </div>
 
@@ -107,5 +114,55 @@ subtitle="Manage your appointments and consultation records."
     </div>
 
 </div>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const doctorLabels = {{ status_labels | tojson }};
+    const doctorCounts = {{ status_counts | tojson }};
+
+    new Chart(
+
+        document.getElementById("doctorChart"),
+
+        {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: doctorLabels,
+
+                datasets: [{
+
+                    data: doctorCounts
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+});
+
+</script>
 
 {% endblock %}

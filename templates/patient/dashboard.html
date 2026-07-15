@@ -46,6 +46,15 @@ subtitle="Here's a quick overview of your healthcare account."
     </div>
 
 </div>
+
+<div class="dashboard-section">
+
+    <h3>Appointment Status Overview</h3>
+
+    <canvas id="appointmentChart"></canvas>
+
+</div>
+
 <div class="dashboard-section">
 
 <h3>Recent Activity</h3>
@@ -223,5 +232,44 @@ subtitle="Here's a quick overview of your healthcare account."
     </div>
 
 </div>
+<script>
+
+const ctx = document.getElementById("appointmentChart");
+
+new Chart(ctx, {
+
+    type: "doughnut",
+
+    data: {
+
+        labels: {{ status_labels | tojson }},
+
+        datasets: [{
+
+            data: {{ status_counts | tojson }}
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                position: "bottom"
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
 
 {% endblock %}

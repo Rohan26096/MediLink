@@ -10,3 +10,4 @@ from .hospital import Hospital
 from .appointment import Appointment
 from .prescription import Prescription
 from models.doctor_schedule import DoctorSchedule
+from models.notification import Notification

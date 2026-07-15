@@ -18,7 +18,7 @@ Consultation Notes
 <div class="dashboard-section">
 
 <form method="POST">
-
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 <label>Patient</label>
 
 <input
@@ -88,7 +88,7 @@ class="form-control">{{ appointment.consultation_notes or "" }}</textarea>
 type="date"
 name="follow_up_date"
 class="form-control"
-value="{{ appointment.follow_up_date if appointment.follow_up_date else '' }}">
+value="{{ appointment.follow_up_date.strftime('%Y-%m-%d') if appointment.follow_up_date else '' }}">
 
 </div>
 

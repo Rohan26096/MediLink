@@ -67,7 +67,27 @@
 
                     </button>
 
-                    <i class="fa-solid fa-bell"></i>
+                    {% set unread = current_user.notifications
+                        | selectattr("is_read", "equalto", false)
+                        | list
+                        | length %}
+
+                    <a href="{{ url_for('notification.notifications') }}"
+                    class="notification-btn">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                        {% if unread > 0 %}
+
+                        <span class="notification-badge">
+
+                            {{ unread }}
+
+                        </span>
+
+                        {% endif %}
+
+                    </a>
 
                     <span>
 

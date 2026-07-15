@@ -37,7 +37,7 @@ from models.user import User
 
 from werkzeug.utils import secure_filename
 from math import ceil
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from models.doctor_schedule import DoctorSchedule
 
 patient = Blueprint("patient", __name__)
@@ -108,6 +108,34 @@ def dashboard():
         profile_completion = int(
             (filled_fields / len(profile_fields)) * 100
         )
+    status_labels = [
+        "Pending",
+        "Accepted",
+        "Completed",
+        "Rejected"
+    ]
+
+    status_counts = [
+        Appointment.query.filter_by(
+            patient_id=patient.id,
+            status="Pending"
+        ).count(),
+
+        Appointment.query.filter_by(
+            patient_id=patient.id,
+            status="Accepted"
+        ).count(),
+
+        Appointment.query.filter_by(
+            patient_id=patient.id,
+            status="Completed"
+        ).count(),
+
+        Appointment.query.filter_by(
+            patient_id=patient.id,
+            status="Rejected"
+        ).count()
+    ]
 
     return render_template(
         "patient/dashboard.html",
@@ -116,7 +144,9 @@ def dashboard():
         prescription_count=prescription_count,
         profile_completion=profile_completion,
         recent_records=recent_records,
-        upcoming=upcoming
+        upcoming=upcoming,
+        status_labels=status_labels,
+        status_counts=status_counts
     )
 
 @patient.route("/patient/profile", methods=["GET", "POST"])
@@ -216,10 +246,55 @@ def book_appointment():
     ).first()
 
     if form.validate_on_submit():
-        existing = Appointment.query.filter(
-            Appointment.doctor_id == form.doctor.data,
-            Appointment.appointment_date == form.appointment_date.data,
-            Appointment.appointment_time == form.appointment_time.data,
+        if form.appointment_date.data < date.today():
+
+            flash(
+                "You cannot book an appointment in the past.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("patient.book_appointment")
+            )
+        day = form.appointment_date.data.strftime("%A")
+
+        schedule = DoctorSchedule.query.filter_by(
+            doctor_id=form.doctor.data,
+            day=day,
+            is_available=True
+        ).first()
+
+        if not schedule:
+
+            flash(
+                "Doctor is unavailable on this day.",
+                "danger"
+            )
+
+            return render_template(
+                "patient/book_appointment.html",
+                form=form
+            )
+
+        if (
+            form.appointment_time.data < schedule.start_time or
+            form.appointment_time.data >= schedule.end_time
+        ):
+
+            flash(
+                "Selected time is outside doctor's schedule.",
+                "danger"
+            )
+
+            return render_template(
+                "patient/book_appointment.html",
+                form=form
+            )
+        existing = Appointment.query.filter_by(
+            doctor_id=form.doctor.data,
+            appointment_date=form.appointment_date.data,
+            appointment_time=form.appointment_time.data
+        ).filter(
             Appointment.status != "Rejected"
         ).first()
 
@@ -246,34 +321,37 @@ def book_appointment():
 
         db.session.add(appointment)
         db.session.commit()
-        send_email(
+        try:
+            send_email(
 
-            current_user.email,
+                current_user.email,
 
-            "Appointment Booked Successfully",
+                "Appointment Booked Successfully",
 
-            f"""
-        Hi {current_user.name},
+                f"""
+            Hi {current_user.name},
 
-        Your appointment has been booked successfully.
+            Your appointment has been booked successfully.
 
-        Doctor:
-        Dr. {appointment.doctor.user.name}
+            Doctor:
+            Dr. {appointment.doctor.user.name}
 
-        Hospital:
-        {appointment.hospital.name}
+            Hospital:
+            {appointment.hospital.name}
 
-        Date:
-        {appointment.appointment_date}
+            Date:
+            {appointment.appointment_date}
 
-        Time:
-        {appointment.appointment_time}
+            Time:
+            {appointment.appointment_time}
 
-        Thank you for choosing MediLink.
+            Thank you for choosing MediLink.
 
-        -MediLink Team
-        """
-        )
+            -MediLink Team
+            """
+            )
+        except Exception as e:
+            print(e)
 
         flash(
             "Appointment booked successfully!",

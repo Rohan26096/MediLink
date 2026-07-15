@@ -12,7 +12,7 @@ from routes.doctor import doctor
 from routes.hospital import hospital
 from routes.admin import admin
 from routes.medical_records import medical_records
-
+from routes.notification import notification
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -33,6 +33,7 @@ app.register_blueprint(doctor)
 app.register_blueprint(hospital)
 app.register_blueprint(admin)
 app.register_blueprint(medical_records)
+app.register_blueprint(notification)
 
 
 @login_manager.user_loader
@@ -67,7 +68,23 @@ with app.app_context():
         db.session.commit()
 
         print("Hospital Admin Created")
-        
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("errors/404.html"), 404
+
+
+@app.errorhandler(403)
+def forbidden(error):
+    return render_template("errors/403.html"), 403
+
+
+@app.errorhandler(500)
+def server_error(error):
+    db.session.rollback()
+    return render_template("errors/500.html"), 500
+
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

@@ -24,6 +24,8 @@ from utils.email import send_email
 from forms.doctor_schedule_form import DoctorScheduleForm
 from models.doctor_schedule import DoctorSchedule
 from datetime import datetime
+from utils.notifications import create_notification
+
 doctor = Blueprint("doctor", __name__)
 
 
@@ -66,6 +68,15 @@ def dashboard():
         .distinct()
         .count()
     )
+    status_labels = [
+        "Pending",
+        "Completed"
+    ]
+
+    status_counts = [
+        pending,
+        completed
+    ]
 
     return render_template(
         "doctor/dashboard.html",
@@ -74,7 +85,9 @@ def dashboard():
         accepted=accepted,
         rejected=rejected,
         completed=completed,
-        total_patients=total_patients
+        total_patients=total_patients,
+        status_labels=status_labels,
+        status_counts=status_counts
     )
 
 
@@ -108,6 +121,11 @@ def accept_appointment(appointment_id):
         return redirect(url_for("doctor.appointments"))
 
     appointment.status = "Accepted"
+    create_notification(
+        appointment.patient.user.id,
+        "Appointment Accepted",
+        f"Dr. {appointment.doctor.user.name} accepted your appointment."
+    )
 
     db.session.commit()
     try:
@@ -151,6 +169,11 @@ def reject_appointment(appointment_id):
         return redirect(url_for("doctor.appointments"))
 
     appointment.status = "Rejected"
+    create_notification(
+        appointment.patient.user.id,
+        "Appointment Rejected",
+        f"Dr. {appointment.doctor.user.name} rejected your appointment."
+    )
 
     db.session.commit()
     try:
@@ -189,6 +212,11 @@ def complete_appointment(appointment_id):
         return redirect(url_for("doctor.appointments"))
 
     appointment.status = "Completed"
+    create_notification(
+        appointment.patient.user.id,
+        "Consultation Completed",
+        "Your consultation has been completed."
+    )
 
     db.session.commit()
     try:
@@ -241,7 +269,6 @@ def consultation(id):
         follow_up = request.form.get("follow_up_date")
 
         if follow_up:
-            from datetime import datetime
             appointment.follow_up_date = datetime.strptime(
                 follow_up,
                 "%Y-%m-%d"
@@ -338,6 +365,12 @@ def prescription(appointment_id):
 
         db.session.add(prescription)
         db.session.commit()
+        
+        create_notification(
+            appointment.patient.user.id,
+            "Prescription Uploaded",
+            "Your prescription is now available."
+        )
         try:
             send_email(
 
@@ -571,6 +604,23 @@ def edit_schedule(id):
             flash(
                 "End time must be after start time.",
                 "danger"
+            )
+
+            return redirect(
+                url_for("doctor.edit_schedule", id=id)
+            )
+
+        existing = DoctorSchedule.query.filter(
+            DoctorSchedule.doctor_id == schedule.doctor_id,
+            DoctorSchedule.day == form.day.data,
+            DoctorSchedule.id != schedule.id
+        ).first()
+
+        if existing:
+
+            flash(
+                "Schedule for this day already exists.",
+                "warning"
             )
 
             return redirect(

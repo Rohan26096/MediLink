@@ -1,0 +1,103 @@
+{% if current_user.role == "patient" %}
+    {% extends "patient/patient_base.html" %}
+{% elif current_user.role == "doctor" %}
+    {% extends "doctor/doctor_base.html" %}
+{% elif current_user.role == "hospital" %}
+    {% extends "hospital/hospital_base.html" %}
+{% else %}
+    {% extends "admin/admin_base.html" %}
+{% endif %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="content">
+
+    <div class="dashboard-header">
+
+        <h2>Notifications</h2>
+
+        <p>Your latest activity.</p>
+
+    </div>
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+        <div class="dashboard-section">
+
+            <h3>
+
+                {{ notification.title }}
+
+                {% if not notification.is_read %}
+
+                <span class="status pending">
+
+                    New
+
+                </span>
+
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {{ notification.message }}
+
+            </p>
+
+            <small>
+
+                {{ notification.created_at.strftime("%d %b %Y %I:%M %p") }}
+
+            </small>
+
+            <br><br>
+
+            {% if not notification.is_read %}
+
+            <a
+            href="{{ url_for('notification.mark_read', id=notification.id) }}"
+            class="action-btn">
+
+                Mark Read
+
+            </a>
+
+            {% endif %}
+
+            <a
+            href="{{ url_for('notification.delete_notification', id=notification.id) }}"
+            class="delete-btn">
+
+                Delete
+
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <i class="fa-solid fa-bell-slash"></i>
+
+        <h4>No Notifications</h4>
+
+        <p>You're all caught up.</p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
