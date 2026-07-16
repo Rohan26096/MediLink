@@ -10,9 +10,8 @@ from flask_login import (
     current_user
 )
 
-from models.notification import Notification
 from models import db
-from flask import flash
+from models.notification import Notification
 
 notification = Blueprint(
     "notification",
@@ -22,7 +21,7 @@ notification = Blueprint(
 
 @notification.route("/notifications")
 @login_required
-def notifications():
+def index():
 
     notifications = (
         Notification.query
@@ -32,56 +31,47 @@ def notifications():
     )
 
     return render_template(
-        "notifications.html",
+        "notification/index.html",
         notifications=notifications
     )
 
 
 @notification.route("/notifications/read/<int:id>")
 @login_required
-def mark_read(id):
+def read(id):
 
     notification = Notification.query.get_or_404(id)
 
     if notification.user_id != current_user.id:
+
         return redirect(
-            url_for("notification.notifications")
+            url_for("notification.index")
         )
 
     notification.is_read = True
 
     db.session.commit()
 
-    flash(
-        "Notification marked as read.",
-        "success"
-    )
-
     return redirect(
-        url_for("notification.notifications")
+        url_for("notification.index")
     )
 
 
-@notification.route("/notifications/delete/<int:id>")
+@notification.route("/notifications/read-all")
 @login_required
-def delete_notification(id):
+def read_all():
 
-    notification = Notification.query.get_or_404(id)
-
-    if notification.user_id != current_user.id:
-        return redirect(
-            url_for("notification.notifications")
-        )
-
-    db.session.delete(notification)
+    Notification.query.filter_by(
+        user_id=current_user.id,
+        is_read=False
+    ).update(
+        {
+            "is_read": True
+        }
+    )
 
     db.session.commit()
 
-    flash(
-        "Notification deleted.",
-        "success"
-    )
-
     return redirect(
-        url_for("notification.notifications")
+        url_for("notification.index")
     )

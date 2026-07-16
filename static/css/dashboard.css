@@ -740,3 +740,20 @@ textarea.form-control{
     justify-content:center;
     font-weight:700;
 }
+
+.notification-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    padding:20px;
+    border-bottom:1px solid var(--card-border);
+}
+
+.notification-card h4{
+    margin-bottom:8px;
+}
+
+.notification-card small{
+    opacity:.7;
+}

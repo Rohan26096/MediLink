@@ -1,0 +1,113 @@
+{% extends current_user.role + "/" + current_user.role + "_base.html" %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block page_title %}
+Notifications
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dashboard-header">
+
+    <h2>Notifications</h2>
+
+    <p>Your recent activity.</p>
+
+</div>
+
+<div class="dashboard-section">
+
+    <div class="section-header">
+
+        <h3>All Notifications</h3>
+
+        <a
+        href="{{ url_for('notification.read_all') }}"
+        class="action-btn">
+
+            Mark All Read
+
+        </a>
+
+    </div>
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+        <div class="notification-card">
+
+            <div>
+
+                <h4>
+
+                    {{ notification.title }}
+
+                    {% if not notification.is_read %}
+
+                    <span class="status pending">
+
+                        New
+
+                    </span>
+
+                    {% endif %}
+
+                </h4>
+
+                <p>
+
+                    {{ notification.message }}
+
+                </p>
+
+                <small>
+
+                    {{ notification.created_at.strftime("%d %b %Y %I:%M %p") }}
+
+                </small>
+
+            </div>
+
+            {% if not notification.is_read %}
+
+            <a
+            href="{{ url_for('notification.read', id=notification.id) }}"
+            class="action-btn">
+
+                Mark Read
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+        <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <i class="fa-solid fa-bell-slash"></i>
+
+        <h4>No Notifications</h4>
+
+        <p>
+
+            You're all caught up.
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
