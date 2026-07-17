@@ -59,9 +59,37 @@
 
                 </h2>
 
+                {% if request.blueprint == "admin" %}
+
+                <form
+                    action="{{ url_for('admin.search') }}"
+                    method="GET"
+                    class="global-search">
+
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Search users, doctors, hospitals..."
+                        value="{{ request.args.get('q', '') }}"
+                        autocomplete="off"
+                        aria-label="Search">
+
+                    <button type="submit">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                    </button>
+
+                </form>
+
+                {% endif %}
+
                 <div class="profile">
 
-                    <button id="theme-toggle" class="theme-btn">
+                    <button
+                        id="theme-toggle"
+                        class="theme-btn"
+                        title="Toggle Theme">
 
                         <i class="fa-solid fa-moon"></i>
 
@@ -72,14 +100,18 @@
                         | list
                         | length %}
 
-                    <a href="{{ url_for('notification.notifications') }}"
-                    class="notification-btn">
+                    <a
+                        href="{{ url_for('notification.index') }}"
+                        class="notification-btn"
+                        title="Notifications">
 
                         <i class="fa-solid fa-bell"></i>
 
                         {% if unread > 0 %}
                         <span class="notification-badge">
+
                             {{ unread }}
+
                         </span>
                         {% endif %}
 
@@ -148,6 +180,7 @@
         });
 
     </script>
+
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 
 </body>

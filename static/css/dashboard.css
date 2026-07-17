@@ -858,3 +858,35 @@ textarea.form-control{
 .filter-form button{
     white-space:nowrap;
 }
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.global-search{
+    flex:1;
+    max-width:420px;
+    display:flex;
+    align-items:center;
+}
+
+.global-search input{
+    flex:1;
+    padding:10px 14px;
+    border:1px solid #dcdcdc;
+    border-right:none;
+    border-radius:8px 0 0 8px;
+    background:var(--card-bg);
+    color:var(--text-color);
+}
+
+.global-search button{
+    padding:10px 16px;
+    border:none;
+    cursor:pointer;
+    border-radius:0 8px 8px 0;
+    background:var(--primary-color);
+    color:white;
+}

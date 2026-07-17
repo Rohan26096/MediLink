@@ -40,6 +40,13 @@ subtitle="Manage the entire MediLink platform."
     {% with icon="fa-solid fa-calendar-check", value=total_appointments, title="Appointments" %}
         {% include "components/stat_card.html" %}
     {% endwith %}
+    {% with icon="fa-solid fa-prescription", value=total_prescriptions, title="Prescriptions" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
+
+    {% with icon="fa-solid fa-file-medical", value=total_medical_records, title="Medical Records" %}
+        {% include "components/stat_card.html" %}
+    {% endwith %}
 
 </div>
 
@@ -53,11 +60,21 @@ subtitle="Manage the entire MediLink platform."
 
         <div class="stat-card">
 
-            <i class="fa-solid fa-user-check"></i>
+            <i class="fa-solid fa-prescription"></i>
 
-            <h2>{{ total_users }}</h2>
+            <h2>{{ total_prescriptions }}</h2>
 
-            <p>Registered Users</p>
+            <p>Prescriptions</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fa-solid fa-file-medical"></i>
+
+            <h2>{{ total_medical_records }}</h2>
+
+            <p>Medical Records</p>
 
         </div>
 
@@ -166,6 +183,92 @@ subtitle="Manage the entire MediLink platform."
     </ul>
 
 </div>
+<div class="dashboard-section">
+
+    <h2>Recent Users</h2>
+
+    <table class="recent-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for user in recent_users %}
+
+            <tr>
+
+                <td>{{ user.name }}</td>
+
+                <td>{{ user.email }}</td>
+
+                <td>{{ user.role }}</td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+<div class="dashboard-section">
+
+    <h2>Recent Appointments</h2>
+
+    <table class="recent-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Status</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for appointment in recent_appointments %}
+
+            <tr>
+
+                <td>{{ appointment.patient.user.name }}</td>
+
+                <td>{{ appointment.appointment_date.strftime("%d %b %Y") }}</td>
+
+                <td>
+
+                    <span class="status {{ appointment.status|lower }}">
+
+                        {{ appointment.status }}
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
 
 <!-- Analytics -->
 
@@ -185,35 +288,14 @@ subtitle="Manage the entire MediLink platform."
 
 const ctx = document.getElementById("appointmentChart");
 
-const appointmentData = {{ [
-
-    appointment_status["Pending"],
-
-    appointment_status["Accepted"],
-
-    appointment_status["Rejected"],
-
-    appointment_status["Completed"]
-
-] | tojson }};
+const appointmentData = {{ status_counts | tojson }};
 
 new Chart(ctx, {
 
     type: "doughnut",
 
     data: {
-
-        labels: [
-
-            "Pending",
-
-            "Accepted",
-
-            "Rejected",
-
-            "Completed"
-
-        ],
+        labels: {{ status_labels | tojson }},
 
         datasets: [{
 
