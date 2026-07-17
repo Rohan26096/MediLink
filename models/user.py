@@ -51,3 +51,8 @@ class User(UserMixin, db.Model):
         db.String(255),
         default="default.png"
     )
+    notifications = db.relationship(
+        "Notification",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )

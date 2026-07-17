@@ -11,13 +11,61 @@ Doctor Appointments
 {% block dashboard_content %}
 
 <div class="dashboard-header">
+
     <h2>Appointment Requests</h2>
+
     <p>Manage all appointment requests assigned to you.</p>
+
 </div>
+<form method="GET" class="filter-form">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search patient..."
+        value="{{ search }}"
+    >
+
+    <select name="status">
+
+        <option value="">All Status</option>
+
+        <option value="Pending"
+            {% if status=="Pending" %}selected{% endif %}>
+            Pending
+        </option>
+
+        <option value="Accepted"
+            {% if status=="Accepted" %}selected{% endif %}>
+            Accepted
+        </option>
+
+        <option value="Completed"
+            {% if status=="Completed" %}selected{% endif %}>
+            Completed
+        </option>
+
+        <option value="Rejected"
+            {% if status=="Rejected" %}selected{% endif %}>
+            Rejected
+        </option>
+
+    </select>
+
+    <button class="action-btn">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        Search
+
+    </button>
+
+</form>
+
 
 <div class="dashboard-section">
 
-{% if appointments %}
+{% if appointments.items %}
 
 <table class="recent-table">
 
@@ -35,7 +83,7 @@ Doctor Appointments
 
 <tbody>
 
-{% for appointment in appointments %}
+{% for appointment in appointments.items %}
 
 <tr>
 
@@ -114,6 +162,19 @@ Reject
     <i class="fa-solid fa-prescription"></i>
     Prescription
 </a>
+{% if appointment.status == "Accepted" %}
+
+<a href="{{ url_for('doctor.complete_appointment',
+appointment_id=appointment.id) }}"
+class="action-btn">
+
+    <i class="fa-solid fa-circle-check"></i>
+
+    Complete
+
+</a>
+
+{% endif %}
 
 </div>
 </td>
@@ -126,6 +187,35 @@ Reject
 
 </table>
 
+<div class="pagination">
+
+    {% if appointments.has_prev %}
+        <a href="{{ url_for('doctor.appointments',
+            page=appointments.prev_num,
+            search=search,
+            status=status) }}">
+            Previous
+        </a>
+    {% endif %}
+
+    <span>
+
+        Page {{ appointments.page }}
+        of {{ appointments.pages }}
+
+    </span>
+
+    {% if appointments.has_next %}
+        <a href="{{ url_for('doctor.appointments',
+            page=appointments.next_num,
+            search=search,
+            status=status) }}">
+            Next
+        </a>
+    {% endif %}
+
+</div>
+
 {% else %}
 
 <div class="empty-state">
@@ -137,19 +227,6 @@ Reject
     <p>No appointment requests available.</p>
 
 </div>
-{% endif %}
-{% if appointment.status == "Accepted" %}
-
-<a href="{{ url_for('doctor.complete_appointment',
-appointment_id=appointment.id) }}"
-class="action-btn">
-
-<i class="fa-solid fa-circle-check"></i>
-
-Complete
-
-</a>
-
 {% endif %}
 
 </div>

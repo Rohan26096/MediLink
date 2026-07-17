@@ -40,5 +40,5 @@ class Notification(db.Model):
 
     user = db.relationship(
         "User",
-        backref="notifications"
+        back_populates="notifications"
     )

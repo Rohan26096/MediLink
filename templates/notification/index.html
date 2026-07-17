@@ -1,4 +1,4 @@
-{% extends current_user.role + "/" + current_user.role + "_base.html" %}
+{% extends "dashboard_base.html" %}
 
 {% block title %}
 Notifications
@@ -12,102 +12,72 @@ Notifications
 
 <div class="dashboard-header">
 
-    <h2>Notifications</h2>
+    <h2>Notification Center</h2>
 
-    <p>Your recent activity.</p>
+    <a href="{{ url_for('notification.read_all') }}"
+       class="action-btn">
+
+        Mark All Read
+
+    </a>
 
 </div>
 
-<div class="dashboard-section">
+{% if notifications %}
 
-    <div class="section-header">
+    {% for notification in notifications %}
 
-        <h3>All Notifications</h3>
+    <div class="notification-card">
 
-        <a
-        href="{{ url_for('notification.read_all') }}"
-        class="action-btn">
+        <div class="notification-content">
 
-            Mark All Read
+            <h4>
 
-        </a>
+                {{ notification.title }}
 
-    </div>
+                {% if not notification.is_read %}
+                    <span class="status pending">New</span>
+                {% endif %}
 
-    {% if notifications %}
+            </h4>
 
-        {% for notification in notifications %}
+            <p>{{ notification.message }}</p>
 
-        <div class="notification-card">
+            <small>
 
-            <div>
+                {{ notification.created_at.strftime("%d %b %Y %I:%M %p") }}
 
-                <h4>
-
-                    {{ notification.title }}
-
-                    {% if not notification.is_read %}
-
-                    <span class="status pending">
-
-                        New
-
-                    </span>
-
-                    {% endif %}
-
-                </h4>
-
-                <p>
-
-                    {{ notification.message }}
-
-                </p>
-
-                <small>
-
-                    {{ notification.created_at.strftime("%d %b %Y %I:%M %p") }}
-
-                </small>
-
-            </div>
-
-            {% if not notification.is_read %}
-
-            <a
-            href="{{ url_for('notification.read', id=notification.id) }}"
-            class="action-btn">
-
-                Mark Read
-
-            </a>
-
-            {% endif %}
+            </small>
 
         </div>
 
-        <hr>
+        {% if not notification.is_read %}
 
-        {% endfor %}
+        <a href="{{ url_for('notification.read', id=notification.id) }}"
+           class="action-btn">
 
-    {% else %}
+            Mark Read
 
-    <div class="empty-state">
+        </a>
 
-        <i class="fa-solid fa-bell-slash"></i>
-
-        <h4>No Notifications</h4>
-
-        <p>
-
-            You're all caught up.
-
-        </p>
+        {% endif %}
 
     </div>
 
-    {% endif %}
+    {% endfor %}
+
+{% else %}
+
+<div class="empty-state">
+
+    <i class="fa-solid fa-bell-slash"></i>
+
+    <h3>No Notifications</h3>
+
+    <p>You're all caught up.</p>
 
 </div>
+
+{% endif %}
 
 {% endblock %}

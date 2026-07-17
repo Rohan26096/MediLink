@@ -49,21 +49,21 @@ subtitle="Manage your appointments and consultation records."
 
         <div class="stat-card">
 
-            <i class="fa-solid fa-user-clock"></i>
+            <i class="fa-solid fa-calendar-day"></i>
 
-            <h2>{{ pending }}</h2>
+            <h2>{{ today_appointments }}</h2>
 
-            <p>Pending Requests</p>
+            <p>Today's Appointments</p>
 
         </div>
 
         <div class="stat-card">
 
-            <i class="fa-solid fa-circle-check"></i>
+            <i class="fa-solid fa-calendar-plus"></i>
 
-            <h2>{{ completed }}</h2>
+            <h2>{{ upcoming_appointments }}</h2>
 
-            <p>Completed Consultations</p>
+            <p>Upcoming Appointments</p>
 
         </div>
 
@@ -78,8 +78,9 @@ subtitle="Manage your appointments and consultation records."
         </div>
 
     </div>
-    
+
 </div>
+
 <div class="dashboard-section">
 
     <h3>Consultation Overview</h3>

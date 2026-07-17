@@ -12,11 +12,11 @@ from flask_login import (
     current_user
 )
 from forms.doctor_profile_form import DoctorEditProfileForm
-
 from models import db
 from models.doctor import Doctor
 from models.appointment import Appointment
 from forms.prescription_form import PrescriptionForm
+from models.user import User
 from models.prescription import Prescription
 from models.patient import Patient
 from models.medical_record import MedicalRecord
@@ -40,7 +40,6 @@ def dashboard():
     total_appointments = Appointment.query.filter_by(
         doctor_id=doctor.id
     ).count()
-
 
     pending = Appointment.query.filter_by(
         doctor_id=doctor.id,
@@ -68,14 +67,49 @@ def dashboard():
         .distinct()
         .count()
     )
+
+    today = datetime.today().date()
+
+    today_appointments = (
+        Appointment.query
+        .filter_by(
+            doctor_id=doctor.id,
+            appointment_date=today
+        )
+        .count()
+    )
+
+    upcoming_appointments = (
+        Appointment.query
+        .filter(
+            Appointment.doctor_id == doctor.id,
+            Appointment.appointment_date > today
+        )
+        .count()
+    )
+
+    recent_appointments = (
+        Appointment.query
+        .filter_by(doctor_id=doctor.id)
+        .order_by(
+            Appointment.appointment_date.desc(),
+            Appointment.appointment_time.desc()
+        )
+        .limit(5)
+        .all()
+    )
     status_labels = [
         "Pending",
-        "Completed"
+        "Accepted",
+        "Completed",
+        "Rejected"
     ]
 
     status_counts = [
         pending,
-        completed
+        accepted,
+        completed,
+        rejected
     ]
 
     return render_template(
@@ -86,10 +120,12 @@ def dashboard():
         rejected=rejected,
         completed=completed,
         total_patients=total_patients,
+        today_appointments=today_appointments,
+        upcoming_appointments=upcoming_appointments,
+        recent_appointments=recent_appointments,
         status_labels=status_labels,
         status_counts=status_counts
     )
-
 
 @doctor.route("/doctor/appointments")
 @login_required
@@ -99,16 +135,41 @@ def appointments():
         user_id=current_user.id
     ).first()
 
+    search = request.args.get("search", "").strip()
+    status = request.args.get("status", "")
+
     appointments = Appointment.query.filter_by(
         doctor_id=doctor.id
-    ).order_by(
-    Appointment.appointment_date.desc(),
-    Appointment.appointment_time.desc()
-    ).all()
+    )
 
+    if search:
+        appointments = appointments.join(Patient).join(Patient.user).filter(
+            db.or_(
+                User.name.ilike(f"%{search}%"),
+                Appointment.appointment_date.cast(db.String).ilike(f"%{search}%")
+            )
+        )
+
+    if status:
+        appointments = appointments.filter(
+            Appointment.status == status
+        )
+
+    page = request.args.get("page", 1, type=int)
+
+    appointments = appointments.order_by(
+        Appointment.appointment_date.desc(),
+        Appointment.appointment_time.desc()
+    ).paginate(
+        page=page,
+        per_page=10,
+        error_out=False
+    )
     return render_template(
         "doctor/appointments.html",
-        appointments=appointments
+        appointments=appointments,
+        search=search,
+        status=status
     )
 
 @doctor.route("/doctor/appointment/accept/<int:appointment_id>")
@@ -364,13 +425,14 @@ def prescription(appointment_id):
         prescription.instructions = form.instructions.data
 
         db.session.add(prescription)
-        db.session.commit()
         
         create_notification(
             appointment.patient.user.id,
             "Prescription Uploaded",
             "Your prescription is now available."
         )
+        db.session.commit()
+        
         try:
             send_email(
 

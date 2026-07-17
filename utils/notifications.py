@@ -15,4 +15,3 @@ def create_notification(
     )
 
     db.session.add(notification)
-    db.session.commit()
