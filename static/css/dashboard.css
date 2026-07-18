@@ -40,8 +40,8 @@ body.dark-mode{
 }
 
 body{
-    background:var(--body-bg);
-    color:var(--text-color);
+    background: #ffffff;
+    color: #000;
     transition:background .3s,color .3s;
 }
 

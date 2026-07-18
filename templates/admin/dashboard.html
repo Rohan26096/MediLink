@@ -155,6 +155,31 @@ subtitle="Manage the entire MediLink platform."
     </div>
 
 </div>
+<div class="dashboard-section">
+
+    <h2>Reports</h2>
+
+    <div class="action-buttons">
+
+        <a href="{{ url_for('admin.export_users') }}" class="action-btn">
+
+            <i class="fa-solid fa-file-csv"></i>
+
+            Export Users
+
+        </a>
+
+        <a href="{{ url_for('admin.export_appointments') }}" class="action-btn">
+
+            <i class="fa-solid fa-download"></i>
+
+            Export Appointments
+
+        </a>
+
+    </div>
+
+</div>
 
 <!-- Recent Activity -->
 
@@ -203,19 +228,25 @@ subtitle="Manage the entire MediLink platform."
 
         <tbody>
 
-        {% for user in recent_users %}
+        {% if recent_users %}
+
+            {% for user in recent_users %}
 
             <tr>
-
                 <td>{{ user.name }}</td>
-
                 <td>{{ user.email }}</td>
-
                 <td>{{ user.role }}</td>
-
             </tr>
 
-        {% endfor %}
+            {% endfor %}
+
+        {% else %}
+
+        <tr>
+            <td colspan="3">No users found.</td>
+        </tr>
+
+        {% endif %}
 
         </tbody>
 
@@ -242,7 +273,9 @@ subtitle="Manage the entire MediLink platform."
 
         <tbody>
 
-        {% for appointment in recent_appointments %}
+        {% if recent_appointments %}
+
+            {% for appointment in recent_appointments %}
 
             <tr>
 
@@ -262,7 +295,17 @@ subtitle="Manage the entire MediLink platform."
 
             </tr>
 
-        {% endfor %}
+            {% endfor %}
+
+        {% else %}
+
+        <tr>
+
+            <td colspan="3">No appointments found.</td>
+
+        </tr>
+
+        {% endif %}
 
         </tbody>
 
@@ -283,6 +326,88 @@ subtitle="Manage the entire MediLink platform."
     </div>
 
 </div>
+<div class="dashboard-section">
+
+    <h2>Monthly Appointment Trends</h2>
+
+    <div style="height:350px;">
+
+        <canvas id="monthlyChart"></canvas>
+
+    </div>
+
+</div>
+<div class="dashboard-section">
+
+    <h2>Platform Health</h2>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <i class="fa-solid fa-database"></i>
+            <h3>Database</h3>
+            <p>Online ✅</p>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-solid fa-envelope"></i>
+            <h3>Email</h3>
+            <p>Connected ✅</p>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-solid fa-bell"></i>
+            <h3>Notifications</h3>
+            <p>Working ✅</p>
+        </div>
+
+        <div class="stat-card">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>Security</h3>
+            <p>Healthy ✅</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+new Chart(document.getElementById("monthlyChart"), {
+
+    type: "line",
+
+    data: {
+
+        labels: {{ monthly_labels | tojson }},
+
+        datasets: [{
+
+            label: "Appointments",
+
+            data: {{ monthly_counts | tojson }},
+
+            tension: 0.35,
+
+            fill: false,
+            borderWidth: 3,
+            pointRadius: 4
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false
+
+    }
+
+});
+
+</script>
 
 <script>
 

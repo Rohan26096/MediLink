@@ -25,6 +25,7 @@ from forms.doctor_schedule_form import DoctorScheduleForm
 from models.doctor_schedule import DoctorSchedule
 from datetime import datetime
 from utils.notifications import create_notification
+from flask import abort
 
 doctor = Blueprint("doctor", __name__)
 
@@ -178,8 +179,7 @@ def accept_appointment(appointment_id):
 
     appointment = Appointment.query.get_or_404(appointment_id)
     if appointment.doctor_id != current_user.doctor.id:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for("doctor.appointments"))
+        abort(403)
 
     appointment.status = "Accepted"
     create_notification(
@@ -226,8 +226,7 @@ def reject_appointment(appointment_id):
 
     appointment = Appointment.query.get_or_404(appointment_id)
     if appointment.doctor_id != current_user.doctor.id:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for("doctor.appointments"))
+        abort(403)
 
     appointment.status = "Rejected"
     create_notification(
@@ -269,8 +268,7 @@ def complete_appointment(appointment_id):
 
     appointment = Appointment.query.get_or_404(appointment_id)
     if appointment.doctor_id != current_user.doctor.id:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for("doctor.appointments"))
+        abort(403)
 
     appointment.status = "Completed"
     create_notification(
@@ -314,8 +312,7 @@ def consultation(id):
 
     appointment = Appointment.query.get_or_404(id)
     if appointment.doctor_id != current_user.doctor.id:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for("doctor.appointments"))
+        abort(403)
 
     if request.method == "POST":
 
@@ -404,8 +401,7 @@ def prescription(appointment_id):
         appointment_id
     )
     if appointment.doctor_id != current_user.doctor.id:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for("doctor.appointments"))
+        abort(403)
 
     form = PrescriptionForm()
 
@@ -432,7 +428,7 @@ def prescription(appointment_id):
             "Your prescription is now available."
         )
         db.session.commit()
-        
+
         try:
             send_email(
 
@@ -491,8 +487,7 @@ def patient_history(patient_id):
     ).first()
 
     if not appointment:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for("doctor.appointments"))
+        abort(403)
 
     records = (
         MedicalRecord.query
@@ -615,15 +610,7 @@ def delete_schedule(id):
     schedule = DoctorSchedule.query.get_or_404(id)
 
     if schedule.doctor.user_id != current_user.id:
-
-        flash(
-            "Unauthorized access.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("doctor.schedule")
-        )
+        abort(403)
 
     db.session.delete(schedule)
 
@@ -647,16 +634,8 @@ def edit_schedule(id):
     schedule = DoctorSchedule.query.get_or_404(id)
 
     if schedule.doctor.user_id != current_user.id:
-
-        flash(
-            "Unauthorized access.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("doctor.schedule")
-        )
-
+        abort(403)
+        
     form = DoctorScheduleForm(obj=schedule)
 
     if form.validate_on_submit():

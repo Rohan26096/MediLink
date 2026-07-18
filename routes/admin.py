@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template
-from flask_login import login_required
-
+from flask_login import (
+    login_required,
+    current_user
+)
 from models.user import User
 from models.patient import Patient
 from models.doctor import Doctor
@@ -10,6 +12,11 @@ from sqlalchemy import or_
 from flask import request
 from models.prescription import Prescription
 from models.medical_record import MedicalRecord
+import csv
+from io import StringIO
+from flask import Response
+from sqlalchemy import extract
+from flask import abort
 
 admin = Blueprint("admin", __name__)
 
@@ -17,7 +24,9 @@ admin = Blueprint("admin", __name__)
 @admin.route("/admin/dashboard")
 @login_required
 def dashboard():
-
+    if current_user.role != "admin":
+        abort(403)
+    
     total_users = User.query.count()
     total_patients = Patient.query.count()
     total_doctors = Doctor.query.count()
@@ -59,6 +68,20 @@ def dashboard():
         .limit(5)
         .all()
     )
+    monthly_labels = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ]
+
+    monthly_counts = []
+
+    for month in range(1, 13):
+
+        count = Appointment.query.filter(
+            extract("month", Appointment.appointment_date) == month
+        ).count()
+
+        monthly_counts.append(count)
 
     status_labels = list(appointment_status.keys())
     status_counts = list(appointment_status.values())
@@ -78,12 +101,16 @@ def dashboard():
         status_labels=status_labels,
         status_counts=status_counts,
         recent_users=recent_users,
-        recent_appointments=recent_appointments
+        recent_appointments=recent_appointments,
+        monthly_labels=monthly_labels,
+        monthly_counts=monthly_counts
     )
 
 @admin.route("/admin/users")
 @login_required
 def users():
+    if current_user.role != "admin":
+        abort(403)
 
     search = request.args.get("search", "").strip()
 
@@ -114,6 +141,8 @@ def users():
 @admin.route("/admin/doctors")
 @login_required
 def doctors():
+    if current_user.role != "admin":
+        abort(403)
 
     doctors = Doctor.query.all()
 
@@ -125,6 +154,8 @@ def doctors():
 @admin.route("/admin/appointments")
 @login_required
 def appointments():
+    if current_user.role != "admin":
+        abort(403)
 
     appointments = (
         Appointment.query
@@ -142,6 +173,8 @@ def appointments():
 @admin.route("/admin/search")
 @login_required
 def search():
+    if current_user.role != "admin":
+        abort(403)
 
     query = request.args.get("q", "").strip()
 
@@ -178,4 +211,80 @@ def search():
         doctors=doctors,
         hospitals=hospitals,
         patients=patients
+    )
+
+@admin.route("/admin/export/users")
+@login_required
+def export_users():
+    if current_user.role != "admin":
+        abort(403)
+
+    output = StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "ID",
+        "Name",
+        "Email",
+        "Role"
+    ])
+
+    users = User.query.order_by(User.id).all()
+
+    for user in users:
+
+        writer.writerow([
+            user.id,
+            user.name,
+            user.email,
+            user.role
+        ])
+
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition":
+            "attachment; filename=users.csv"
+        }
+    )
+
+@admin.route("/admin/export/appointments")
+@login_required
+def export_appointments():
+    if current_user.role != "admin":
+        abort(403)
+
+    output = StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "Patient",
+        "Doctor",
+        "Date",
+        "Time",
+        "Status"
+    ])
+
+    appointments = Appointment.query.all()
+
+    for appointment in appointments:
+
+        writer.writerow([
+            appointment.patient.user.name,
+            appointment.doctor.user.name,
+            appointment.appointment_date,
+            appointment.appointment_time,
+            appointment.status
+        ])
+
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition":
+            "attachment; filename=appointments.csv"
+        }
     )

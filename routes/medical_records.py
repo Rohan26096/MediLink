@@ -1,7 +1,6 @@
 import os
 import uuid
 from werkzeug.utils import secure_filename
-from flask import send_from_directory
 
 from flask import (
     Blueprint,
@@ -9,7 +8,9 @@ from flask import (
     redirect,
     url_for,
     flash,
-    current_app
+    current_app,
+    send_from_directory,
+    abort
 )
 
 from flask_login import (
@@ -20,7 +21,6 @@ from flask_login import (
 from models import db
 from models.patient import Patient
 from models.medical_record import MedicalRecord
-
 from forms.medical_record_forms import MedicalRecordForm
 
 
@@ -104,6 +104,15 @@ def records():
 @login_required
 def download_record(filename):
 
+    patient = Patient.query.filter_by(
+        user_id=current_user.id
+    ).first_or_404()
+
+    record = MedicalRecord.query.filter_by(
+        patient_id=patient.id,
+        file_name=filename
+    ).first_or_404()
+
     upload_folder = os.path.join(
         current_app.root_path,
         "uploads",
@@ -112,9 +121,10 @@ def download_record(filename):
 
     return send_from_directory(
         upload_folder,
-        filename,
+        record.file_name,
         as_attachment=True
     )
+
 
 @medical_records.route("/patient/medical-records/delete/<int:record_id>")
 @login_required
@@ -124,12 +134,10 @@ def delete_record(record_id):
 
     patient = Patient.query.filter_by(
         user_id=current_user.id
-    ).first()
+    ).first_or_404()
 
-    # Prevent users from deleting someone else's record
     if record.patient_id != patient.id:
-        flash("Unauthorized action.", "danger")
-        return redirect(url_for("medical_records.records"))
+        abort(403)
 
     filepath = os.path.join(
         current_app.root_path,
@@ -146,4 +154,6 @@ def delete_record(record_id):
 
     flash("Medical record deleted successfully.", "success")
 
-    return redirect(url_for("medical_records.records"))
+    return redirect(
+        url_for("medical_records.records")
+    )

@@ -20,7 +20,7 @@ from forms.hospital_forms import HospitalProfileForm
 from models.doctor import Doctor
 from models.patient import Patient
 from models.appointment import Appointment
-
+from flask import abort
 
 hospital = Blueprint("hospital", __name__)
 
@@ -31,7 +31,7 @@ def dashboard():
 
     hospital = Hospital.query.filter_by(
         admin_id=current_user.id
-    ).first()
+    ).first_or_404()
 
     if not hospital:
 
@@ -87,7 +87,9 @@ def profile():
 
     form = HospitalProfileForm()
 
-    hospital = Hospital.query.first()
+    hospital = Hospital.query.filter_by(
+        admin_id=current_user.id
+    ).first()
 
     if not hospital:
 
@@ -131,7 +133,9 @@ def profile():
 @login_required
 def doctors():
 
-    hospital = Hospital.query.first()
+    hospital = Hospital.query.filter_by(
+        admin_id=current_user.id
+    ).first_or_404()
 
     doctors = Doctor.query.filter_by(
         hospital_id=hospital.id
@@ -222,6 +226,12 @@ def add_doctor():
 def edit_doctor(doctor_id):
 
     doctor = Doctor.query.get_or_404(doctor_id)
+    hospital = Hospital.query.filter_by(
+        admin_id=current_user.id
+    ).first_or_404()
+
+    if doctor.hospital_id != hospital.id:
+        abort(403)
 
     user = User.query.get(doctor.user_id)
 
@@ -272,6 +282,12 @@ def edit_doctor(doctor_id):
 def delete_doctor(doctor_id):
 
     doctor = Doctor.query.get_or_404(doctor_id)
+    hospital = Hospital.query.filter_by(
+        admin_id=current_user.id
+    ).first_or_404()
+
+    if doctor.hospital_id != hospital.id:
+        abort(403)
 
     user = User.query.get_or_404(
         doctor.user_id
@@ -295,7 +311,9 @@ def delete_doctor(doctor_id):
 @login_required
 def appointments():
 
-    hospital = Hospital.query.first()
+    hospital = Hospital.query.filter_by(
+        admin_id=current_user.id
+    ).first_or_404()
 
     status = request.args.get("status")
 
@@ -327,14 +345,6 @@ def appointments():
         per_page=per_page,
         error_out=False
     )
-
-    if status:
-        appointments = appointments.filter_by(status=status)
-
-    appointments = appointments.order_by(
-        Appointment.appointment_date.desc(),
-        Appointment.appointment_time.desc()
-    ).all()
 
     return render_template(
         "hospital/appointments.html",

@@ -1,48 +1,35 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const themeBtn = document.querySelector(".theme-btn");
+    const themeBtn = document.getElementById("theme-toggle");
 
-    const body = document.body;
+    if (!themeBtn) return;
 
-    const icon = themeBtn ? themeBtn.querySelector("i") : null;
+    const root = document.documentElement;
+    const icon = themeBtn.querySelector("i");
 
-    function updateIcon() {
-        if (!icon) return;
+    function applyTheme(theme) {
 
-        if (body.classList.contains("dark-mode")) {
+        if (theme === "dark") {
+            root.classList.add("dark-mode");
             icon.className = "fa-solid fa-sun";
         } else {
+            root.classList.remove("dark-mode");
             icon.className = "fa-solid fa-moon";
         }
+
+        localStorage.setItem("theme", theme);
     }
 
-    updateIcon();
+    applyTheme(localStorage.getItem("theme") || "light");
 
-    if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
 
-        themeBtn.addEventListener("click", () => {
+        const newTheme = root.classList.contains("dark-mode")
+            ? "light"
+            : "dark";
 
-            body.classList.toggle("dark-mode");
+        applyTheme(newTheme);
 
-            localStorage.setItem(
-                "theme",
-                body.classList.contains("dark-mode") ? "dark" : "light"
-            );
-
-            updateIcon();
-
-        });
-
-    }
-
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-        body.classList.add("dark-mode");
-    } else {
-        body.classList.remove("dark-mode");
-    }
-
-    updateIcon();
+    });
 
 });

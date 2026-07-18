@@ -5,6 +5,8 @@ from forms.auth_forms import RegisterForm, LoginForm
 from models import db
 from models.user import User
 from utils.email import send_email
+from flask_login import login_required
+import logging
 
 auth = Blueprint("auth", __name__)
 
@@ -52,8 +54,8 @@ def register():
         -MediLink Team
         """
             )
-        except Exception as e:
-            print(e)
+        except Exception:
+            logging.exception("Failed to send welcome email")
 
         flash("Registration successful. Please login.", "success")
 
@@ -107,6 +109,7 @@ def login():
     )
 
 @auth.route("/logout")
+@login_required
 def logout():
 
     logout_user()

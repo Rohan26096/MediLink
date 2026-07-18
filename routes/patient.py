@@ -39,6 +39,7 @@ from werkzeug.utils import secure_filename
 from math import ceil
 from datetime import datetime, timedelta, date
 from models.doctor_schedule import DoctorSchedule
+from flask import abort
 
 patient = Blueprint("patient", __name__)
 
@@ -117,7 +118,7 @@ def dashboard():
 
     status_counts = [
         Appointment.query.filter_by(
-            patient_id=patient.id,
+            patient_id=patient_data.id,
             status="Pending"
         ).count(),
 
@@ -459,8 +460,7 @@ def cancel_appointment(appointment_id):
     ).first()
 
     if appointment.patient_id != patient.id:
-        flash("Unauthorized action.", "danger")
-        return redirect(url_for("patient.appointments"))
+        abort(403)
 
     if appointment.status == "Pending":
         db.session.delete(appointment)
@@ -505,6 +505,12 @@ def prescriptions():
 def download_prescription(id):
 
     prescription = Prescription.query.get_or_404(id)
+    patient = Patient.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if prescription.appointment.patient_id != patient.id:
+        abort(403)
 
     buffer = BytesIO()
 

@@ -43,6 +43,7 @@ def read(id):
     notification = Notification.query.get_or_404(id)
 
     if notification.user_id != current_user.id:
+        abort(403)
 
         return redirect(
             url_for("notification.index")

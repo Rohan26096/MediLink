@@ -18,7 +18,7 @@
 
 </head>
 
-<body class="{{ 'dark-mode' if session.get('theme', 'light') == 'dark' else '' }}">
+<body>
 
     <div class="dashboard">
 
@@ -139,47 +139,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-
-        const button = document.getElementById("theme-toggle");
-
-        const body = document.body;
-
-        if (localStorage.getItem("theme") === "dark") {
-
-            body.classList.add("dark-mode");
-
-            button.innerHTML =
-                '<i class="fa-solid fa-sun"></i>';
-
-        }
-
-        button.addEventListener("click", function () {
-
-            body.classList.toggle("dark-mode");
-
-            if (body.classList.contains("dark-mode")) {
-
-                localStorage.setItem("theme", "dark");
-
-                button.innerHTML =
-                    '<i class="fa-solid fa-sun"></i>';
-
-            }
-
-            else {
-
-                localStorage.setItem("theme", "light");
-
-                button.innerHTML =
-                    '<i class="fa-solid fa-moon"></i>';
-
-            }
-
-        });
-
-    </script>
 
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 
