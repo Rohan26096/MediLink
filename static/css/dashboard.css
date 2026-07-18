@@ -15,7 +15,7 @@
     --shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-body.dark-mode{
+:root.dark-mode {
     --body-bg:#111827;
     --sidebar-bg:#1e3a8a;
     --topbar-bg:#1f2937;
@@ -40,9 +40,9 @@ body.dark-mode{
 }
 
 body{
-    background: #ffffff;
-    color: #000;
-    transition:background .3s,color .3s;
+    background: var(--body-bg);
+    color: var(--text-color);
+    transition: background .3s ease, color .3s ease;
 }
 
 .dashboard{
